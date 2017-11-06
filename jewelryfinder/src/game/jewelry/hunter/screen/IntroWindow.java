@@ -1,4 +1,4 @@
-package jewelry_finder.screen;
+package game.jewelry.hunter.screen;
 
 import java.awt.CardLayout;
 import java.awt.Color;
