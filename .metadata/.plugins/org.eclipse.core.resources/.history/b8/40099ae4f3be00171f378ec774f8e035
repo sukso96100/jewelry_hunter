@@ -1,0 +1,56 @@
+package io.jewelry.finder;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextPane;
+import javax.swing.JButton;
+
+public class MainWindow extends JFrame {
+
+	public static final int SCREEN_WIDTH = 1200;
+	public static final int SCREEN_HEIGHT = 720;
+	
+	private JPanel contentPane;
+	private JLabel title;
+	private CardLayout cards = new CardLayout();
+
+	public MainWindow() {
+		setTitle("Jewelry Finder");
+		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		setLocationRelativeTo(null); //실행시 게임창이 화면 중앙에 뜸
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //게임창 종료시 프로그램도 함께 종료(반드시 필요)
+		setVisible(true);
+		
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		title = new JLabel();
+		title.setText("Jewelry Finder");
+		contentPane.add(title, BorderLayout.NORTH);
+	}
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainWindow frame = new MainWindow();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+}

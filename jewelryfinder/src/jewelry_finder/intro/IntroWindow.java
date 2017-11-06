@@ -1,64 +1,97 @@
 package jewelry_finder.intro;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import jewelry_finder.gamestart.GameStart;
-
-public class IntroWindow extends JFrame{
+public class IntroWindow extends JFrame implements ActionListener {
 
 	public static final int SCREEN_WIDTH = 1200;
 	public static final int SCREEN_HEIGHT = 720;
 
-	private CardLayout cards = new CardLayout();
+	private Panel intro, start;
+	private JLabel title;
+	private CardLayout cards;
+	private JButton btnStart = new JButton("시작");
+	private JButton btnexp = new JButton("게임방법");
+	private JButton btnExit = new JButton("종료");
+	private JButton btnBack = new JButton("뒤로가기");
 
-	JPanel panel = new JPanel();
-	GameStart gamePanel = new GameStart();
-	JButton btnStart = new JButton("시작");
-	JButton btnexp = new JButton("게임방법");
-	JButton btnExit = new JButton("종료");
-
-	IntroWindow() {
+	public IntroWindow() {
 		setTitle("Jewelry Finder");
-		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 		setLocationRelativeTo(null); //실행시 게임창이 화면 중앙에 뜸
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //게임창 종료시 프로그램도 함께 종료(반드시 필요)
 		setVisible(true);
 
-		add(panel); //패널추가
-		add(gamePanel);
-		panel.add(btnStart);
-		btnStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				changePanel();
-			}
-		});
-		panel.add(btnexp);
-		panel.add(btnExit);
-		btnExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
-						JOptionPane.YES_NO_OPTION);
-				if (exit == JOptionPane.YES_OPTION) {
-					JOptionPane.showMessageDialog(null, "Goodbye");
-					System.exit(0);
-				}
-			}
+		cards = new CardLayout(0, 0);
+		setLayout(cards);
 
-		});
+		//intro 패널
+		intro = new Panel();
+		start = new Panel();
+		intro.setBackground(Color.RED);
+		start.setBackground(Color.BLUE);
+		intro.setLayout(new FlowLayout(FlowLayout.CENTER));
+		start.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+		btnStart.addActionListener(this);
+		btnExit.addActionListener(this);
+		intro.add(btnStart);
+		intro.add(btnexp);
+		intro.add(btnExit);
+
+		btnBack.addActionListener(this);
+		start.add(btnBack);
+
+
+		add("intro", intro);
+		add("start", start);
+
 	}
 
-	public void changePanel() {
-		cards.next(this.getContentPane());
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String str = e.getActionCommand();
+		if(str.equals("시작")) {
+			intro.setVisible(false);
+			start.setVisible(true);
+		}
+		else if (str.equals("종료")) {
+			int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
+					JOptionPane.YES_NO_OPTION);
+			if (exit == JOptionPane.YES_OPTION) {
+				JOptionPane.showMessageDialog(null, "Goodbye");
+				System.exit(0);
+			}
+		}
+		else if(str.equals("뒤로가기")) {
+			start.setVisible(false);
+			intro.setVisible(true);
+		}
 	}
 
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
-		new IntroWindow();
+		IntroWindow frame = new IntroWindow();
+		frame.setVisible(true);
+		frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(1);
+			}
+		});
 	}
 }

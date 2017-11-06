@@ -1,0 +1,88 @@
+package io.jewelry.finder;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+public class MainWindow extends JFrame {
+
+	public static final int SCREEN_WIDTH = 1200;
+	public static final int SCREEN_HEIGHT = 720;
+
+	private JPanel contentPane;
+	private JLabel title;
+	private CardLayout cards = new CardLayout();
+
+	public MainWindow() {
+		setTitle("Jewelry Finder");
+		setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		setLocationRelativeTo(null); //실행시 게임창이 화면 중앙에 뜸
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //게임창 종료시 프로그램도 함께 종료(반드시 필요)
+		setVisible(true);
+
+		//크기 -> setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		//title = new JLabel();
+		//굳이? -> title.setText("Jewelry Finder");
+		contentPane.add(title, BorderLayout.NORTH);
+
+		getContentPane().add("Intro", new IntroPanel(this));
+		getContentPane().add("Start", new StartPanel(this));
+
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.CENTER);
+
+		JLabel lblJewelryFinder = new JLabel("Jewelry Finder");
+		panel.add(lblJewelryFinder);
+
+		JButton btnStart = new JButton("시작");
+		panel.add(btnStart);
+
+		JButton btnExit = new JButton("종료");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
+						JOptionPane.YES_NO_OPTION);
+				if (exit == JOptionPane.YES_OPTION) {
+					JOptionPane.showMessageDialog(null, "Goodbye");
+					System.exit(0);
+				}
+			}
+		});
+		panel.add(btnExit);
+	}
+
+	public void changePanel() {
+		cards.next(this.getContentPane());
+	}
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainWindow frame = new MainWindow();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+}
