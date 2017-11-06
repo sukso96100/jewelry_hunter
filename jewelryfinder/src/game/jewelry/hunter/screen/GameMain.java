@@ -1,21 +1,26 @@
-package jewelryfinder;
+package game.jewelry.hunter.screen;
 
 import java.util.Arrays;
 import java.util.Scanner;
  import java.awt.event.*; 
  import java.awt.*; 
- import javax.swing.*; 
+ import javax.swing.*;
+
+import game.jewelry.hunter.objects.GameMap;
+import game.jewelry.hunter.objects.GameObject;
+import game.jewelry.hunter.objects.Player;
+import game.jewelry.hunter.objects.Rock; 
  
  public class GameMain extends JFrame { 
  	public JPanel GameGround; 
  	public JPanel GameMessage; 
  
  
- 	//¿ÀºêÁ§Æ® °´Ã¼ º¯¼ö 
+ 	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ 
  	public Player User;
  	public Rock[] Rocks; 
  	 
- 	//GUI¸¦ À§ÇÑ JLabelº¯¼ö 
+ 	//GUIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ JLabelï¿½ï¿½ï¿½ï¿½ 
  	public 	JLabel UserLabel, RockLabel[]; 
  	public JLabel UserInfo, RockInfo; 
  	public JTextField UserLocation; 
@@ -23,7 +28,7 @@ import java.util.Scanner;
  
  
  	GameMain(){ 
- 		//Frame »ý¼º 
+ 		//Frame ï¿½ï¿½ï¿½ï¿½ 
  		Scanner s = new Scanner(System.in);
  		setTitle(GameMap.strGameTitle); 
  		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -45,32 +50,32 @@ import java.util.Scanner;
  		 
  		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
  		 
- 		//ÁÖÀÎ°ø °´Ã¼ »ý¼º 
- 		User= new Player("ÇÃ·¹ÀÌ¾î",2,2); 
- 		System.out.printf("%sÀÇ ÃÊ±â À§Ä¡´Â (%d, %d) ÀÔ´Ï´Ù. \n", User.name, User.getX(), User.getY()); 
+ 		//ï¿½ï¿½ï¿½Î°ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ 
+ 		User= new Player("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½",2,2); 
+ 		System.out.printf("%sï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ (%d, %d) ï¿½Ô´Ï´ï¿½. \n", User.name, User.getX(), User.getY()); 
  		 
- 		//ÁÖÀÎ°ø JLabel °´Ã¼ »ý¼º ¹× Frame¿¡ Add 
+ 		//ï¿½ï¿½ï¿½Î°ï¿½ JLabel ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Frameï¿½ï¿½ Add 
  		UserLabel= new JLabel(User.name); 
  		UserLabel.setLocation(User.getX(),User.getY()); 
  		UserLabel.setSize(GameObject.WIDTH,GameObject.HEIGHT); 
  		UserLabel.setForeground(Color.BLUE); 
  		GameGround.add(UserLabel); 
  		 
- 		//À¯ÀúÀ§Ä¡¸¦ TextBox¿¡ Ãâ·Â 
- 		UserInfo= new JLabel("À¯Àú À§Ä¡: (0, 0)"); 
+ 		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ TextBoxï¿½ï¿½ ï¿½ï¿½ï¿½ 
+ 		UserInfo= new JLabel("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡: (0, 0)"); 
  		UserInfo.setLocation(10,20); 
  		UserInfo.setSize(150,20); 
  		GameMessage.add(UserInfo); 
  		
- 		//Rock °´Ã¼ »ý¼º°ú Console¿¡ °á°ú Ãâ·Â
+ 		//Rock ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Consoleï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
  		Rocks = new Rock[Rock.RockNum];
  		
  		for(int i=0; i<Rock.RockNum;i++){
- 			Rocks[i] = new Rock(Rock.RockName[i]);
- 			System.out.printf("%sÀÌ»ý¼ºµÇ¾ú°í, À§Ä¡´Â(%3d, %3d)ÀÔ´Ï´Ù. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
+ 			Rocks[i] = new Rock();
+ 			System.out.printf("%sï¿½Ì»ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½, ï¿½ï¿½Ä¡ï¿½ï¿½(%3d, %3d)ï¿½Ô´Ï´ï¿½. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
  		}
  		
- 		//Rock JLable °´Ã¼ »ý¼º ¹× Frame¿¡ Add
+ 		//Rock JLable ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Frameï¿½ï¿½ Add
  		RockLabel = new JLabel[Rock.RockNum];
  		for(int i =0; i<Rock.RockNum; i++){
  			RockLabel[i] = new JLabel(Rocks[i].name);
@@ -78,14 +83,14 @@ import java.util.Scanner;
  			RockLabel[i].setSize(GameObject.WIDTH, GameObject.HEIGHT);
  			RockLabel[i].setForeground(Color.darkGray);
  		}
- 		//Rock¸¦ TextBox¿¡ Ãâ·Â 
- 		RockInfo= new JLabel("À¯Àú À§Ä¡: (0, 0)"); 
+ 		//Rockï¿½ï¿½ TextBoxï¿½ï¿½ ï¿½ï¿½ï¿½ 
+ 		RockInfo= new JLabel("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡: (0, 0)"); 
  		RockInfo.setLocation(10,20); 
  		RockInfo.setSize(150,20); 
  		GameMessage.add(RockInfo); 
  		
- 		//Á¾·á¹öÆ° 
- 		exit = new JButton("Á¾·á"); 
+ 		//ï¿½ï¿½ï¿½ï¿½ï¿½Æ° 
+ 		exit = new JButton("ï¿½ï¿½ï¿½ï¿½"); 
  		exit.setLocation(400,15); 
  		exit.setSize(80,30);  
  		GameMessage.add(exit); 
@@ -114,15 +119,15 @@ import java.util.Scanner;
  			default: return;  
  			} 
  			UserLabel.setLocation(User.getX(),User.getY()); 
- 			System.out.printf("%s°¡ (%d,%d)·Î ÀÌµ¿Çß½À´Ï´Ù. \n", User.name, (User.getX()/100), (User.getY()/100)); 
- 			UserInfo.setText("À¯Àú À§Ä¡: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
+ 			System.out.printf("%sï¿½ï¿½ (%d,%d)ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. \n", User.name, (User.getX()/100), (User.getY()/100)); 
+ 			UserInfo.setText("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
  		} 
  	} 
  	 
  	class GameActionListener implements ActionListener{ 
  		public void actionPerformed(ActionEvent e){ 
  			JButton b = (JButton)e.getSource(); 
- 			if(b.getText().equals("Á¾·á")) 
+ 			if(b.getText().equals("ï¿½ï¿½ï¿½ï¿½")) 
  				System.exit(0); 
  		} 
  	} 

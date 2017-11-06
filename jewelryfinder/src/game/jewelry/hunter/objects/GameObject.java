@@ -1,4 +1,4 @@
-
+package game.jewelry.hunter.objects;
 public class GameObject {
 
 	public String name;

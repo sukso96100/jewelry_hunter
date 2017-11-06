@@ -1,20 +1,19 @@
-package jewelryfinder;
-
+package game.jewelry.hunter.objects;
 public class Rock extends GameObject{
-	//µ¹ÀÇ °³¼ö¸¦ ÁöÁ¤
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public static final int RockNum=2;
 	public static int x,y;
-	//µ¹ÀÇ ÀÌ¸§À» ÁöÁ¤
-	public static String RockName[]={"µ¹1","µ¹2"};
-	//µ¹À» ºÎ¼ÌÀ» °æ¿ì ¾ò´Â ´É·ÂÄ¡°ªÀ» ÁöÁ¤
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	public static String RockName[]={"ï¿½ï¿½1","ï¿½ï¿½2"};
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½É·ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public static int RockPower[] = {100,120};
 	
 	public Rock(){
 	}
-	
-	public Rock(String r){
-		super(r);
-	}
+//	
+//	public Rock(String r){
+//		super(r);
+//	}
 	public void move(int x, int y){ 
 		if((super.x + x) >= 0 && (super.x+x) <= (GameMap.WIDTH-GameObject.WIDTH)) 
 			super.x += x; 

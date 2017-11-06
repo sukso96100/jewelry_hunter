@@ -1,4 +1,4 @@
-
+package game.jewelry.hunter.objects;
 public class Player extends GameObject {
 	public static final int MOVING_UNIT=100; 
 	

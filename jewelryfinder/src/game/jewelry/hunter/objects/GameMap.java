@@ -1,8 +1,8 @@
-
+package game.jewelry.hunter.objects;
 public class GameMap {
 
 	
 	public static final int WIDTH=500, HEIGHT=500, MAX_WIDTH=WIDTH, MAX_HEIGHT=HEIGHT+80;
-	public static final String strGameTitle = "<º¸¼®»ç³É²Û> ";
+	public static final String strGameTitle = "<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½> ";
 	
 }

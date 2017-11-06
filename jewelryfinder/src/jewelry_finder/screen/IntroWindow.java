@@ -1,4 +1,4 @@
-package jewelry_finder.intro;
+package jewelry_finder.screen;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,21 +22,21 @@ public class IntroWindow extends JFrame implements ActionListener {
 	private Panel intro, start;
 	private JLabel title;
 	private CardLayout cards;
-	private JButton btnStart = new JButton("½ÃÀÛ");
-	private JButton btnexp = new JButton("°ÔÀÓ¹æ¹ý");
-	private JButton btnExit = new JButton("Á¾·á");
-	private JButton btnBack = new JButton("µÚ·Î°¡±â");
+	private JButton btnStart = new JButton("ï¿½ï¿½ï¿½ï¿½");
+	private JButton btnexp = new JButton("ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½");
+	private JButton btnExit = new JButton("ï¿½ï¿½ï¿½ï¿½");
+	private JButton btnBack = new JButton("ï¿½Ú·Î°ï¿½ï¿½ï¿½");
 
 	public IntroWindow() {
 		setTitle("Jewelry Finder");
-		setLocationRelativeTo(null); //½ÇÇà½Ã °ÔÀÓÃ¢ÀÌ È­¸é Áß¾Ó¿¡ ¶ä
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //°ÔÀÓÃ¢ Á¾·á½Ã ÇÁ·Î±×·¥µµ ÇÔ²² Á¾·á(¹Ýµå½Ã ÇÊ¿ä)
+		setLocationRelativeTo(null); //ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¢ï¿½ï¿½ È­ï¿½ï¿½ ï¿½ß¾Ó¿ï¿½ ï¿½ï¿½
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //ï¿½ï¿½ï¿½ï¿½Ã¢ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ýµï¿½ï¿½ ï¿½Ê¿ï¿½)
 		setVisible(true);
 
 		cards = new CardLayout(0, 0);
 		setLayout(cards);
 
-		//intro ÆÐ³Î
+		//intro ï¿½Ð³ï¿½
 		intro = new Panel();
 		start = new Panel();
 		intro.setBackground(Color.RED);
@@ -62,19 +62,19 @@ public class IntroWindow extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String str = e.getActionCommand();
-		if(str.equals("½ÃÀÛ")) {
+		if(str.equals("ï¿½ï¿½ï¿½ï¿½")) {
 			intro.setVisible(false);
 			start.setVisible(true);
 		}
-		else if (str.equals("Á¾·á")) {
-			int exit = JOptionPane.showConfirmDialog(null, "°ÔÀÓÀ» Á¾·áÇÏ½Ã°Ú½À´Ï±î?", "Á¾·áÃ¢",
+		else if (str.equals("ï¿½ï¿½ï¿½ï¿½")) {
+			int exit = JOptionPane.showConfirmDialog(null, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½?", "ï¿½ï¿½ï¿½ï¿½Ã¢",
 					JOptionPane.YES_NO_OPTION);
 			if (exit == JOptionPane.YES_OPTION) {
 				JOptionPane.showMessageDialog(null, "Goodbye");
 				System.exit(0);
 			}
 		}
-		else if(str.equals("µÚ·Î°¡±â")) {
+		else if(str.equals("ï¿½Ú·Î°ï¿½ï¿½ï¿½")) {
 			start.setVisible(false);
 			intro.setVisible(true);
 		}
