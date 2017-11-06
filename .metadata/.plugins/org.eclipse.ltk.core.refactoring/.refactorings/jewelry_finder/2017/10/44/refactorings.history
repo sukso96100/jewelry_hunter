@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy package &apos;io.jewelry.finder&apos; to &apos;jf/src&apos;&#x0A;- Original project: &apos;jewelry_finder&apos;&#x0A;- Destination element: &apos;jf/src&apos;&#x0A;- Original element: &apos;jewelry_finder/src/io.jewelry.finder&apos;" description="Copy package" destination="=jf/src" element1="/src&lt;io.jewelry.finder" flags="589830" fragments="1" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyPackages" stamp="1509354841717" version="1.0"/>
-</session>
