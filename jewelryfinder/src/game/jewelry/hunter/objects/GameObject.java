@@ -5,6 +5,12 @@ public class GameObject {
 	public int x, y;
 	public static final int WIDTH=90, HEIGHT=90;
 	
+	public GameObject(String name, int x, int y) {
+		this.name=name;
+		this.x=x;
+		this.y=y;
+	}
+	
 	public String getName() {
 		return name;
 	}
