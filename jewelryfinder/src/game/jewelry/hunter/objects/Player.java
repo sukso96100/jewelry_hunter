@@ -2,13 +2,8 @@ package game.jewelry.hunter.objects;
 public class Player extends GameObject {
 	public static final int MOVING_UNIT=100; 
 	
-	public Player(){
-	}
-	
 	public Player(String name, int x, int y){
-		super.name=name;
-		super.x=x;
-		super.y=y;
+		super(name, x, y);
 	}
 
 	public void move(int x, int y){
