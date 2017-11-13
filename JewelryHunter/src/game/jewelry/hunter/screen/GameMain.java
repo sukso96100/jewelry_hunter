@@ -94,7 +94,6 @@ import game.jewelry.hunter.objects.Rock;
  		Jewelry jewelry = new Jewelry("보석1",2,2,100);
  		GameGround.add(jewelry.getObjectDisplay());
  		
- 		
  		//time test
  		time= new JLabel("time");
  		time.setLocation(180,180);
@@ -126,14 +125,14 @@ import game.jewelry.hunter.objects.Rock;
  		public void keyPressed(KeyEvent e){ 
  			int keyCode = e.getKeyCode(); 
  			switch(keyCode){ 
- 			case KeyEvent.VK_UP: User.move(0, -User.MOVING_UNIT); break; 
- 			case KeyEvent.VK_DOWN: User.move(0, +User.MOVING_UNIT); break; 
- 			case KeyEvent.VK_LEFT: User.move(-User.MOVING_UNIT, 0); break; 
- 			case KeyEvent.VK_RIGHT: User.move(+User.MOVING_UNIT, 0); break; 
+ 			case KeyEvent.VK_UP: User.move(0, -1); break; 
+ 			case KeyEvent.VK_DOWN: User.move(0, +1); break; 
+ 			case KeyEvent.VK_LEFT: User.move(-1, 0); break; 
+ 			case KeyEvent.VK_RIGHT: User.move(+1, 0); break; 
  			default: return;  
  			} 
-			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()/100), (User.getY()/100)); 
-			UserInfo.setText("유저 위치: (" + (User.getX()/100) +", " + (User.getY()/100) + ")" + " / 점수: " + User.totalScore ); 
+			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
+			UserInfo.setText("유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore ); 
 
  		} 
  	} 
