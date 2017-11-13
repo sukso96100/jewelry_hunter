@@ -4,9 +4,16 @@ public class Player extends GameObject {
 	
 	public Player(){
 	}
-	
+
 	public Player(String name, int x, int y){
 		super.name=name;
+		super.x=x;
+		super.y=y;
+	}
+	
+	public Player(String name, int power, int x, int y){
+		super.name=name;
+		super.power = power;
 		super.x=x;
 		super.y=y;
 	}
