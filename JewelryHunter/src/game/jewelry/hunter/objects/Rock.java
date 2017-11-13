@@ -1,6 +1,6 @@
 package game.jewelry.hunter.objects;
 public class Rock extends GameObject{
-	//���� �̸��� ����
+	
 	private int drability;
 	
 	public Rock(String name, int x, int y, int durability){

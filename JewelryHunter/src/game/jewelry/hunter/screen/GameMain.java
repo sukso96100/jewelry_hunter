@@ -17,19 +17,23 @@ import game.jewelry.hunter.objects.Rock;
  	public JPanel GameMessage; 
  
  
- 	//������Ʈ ��ü ���� 
+ 	//오브젝트 객체 변수
  	public Player User;
  	public Rock[] Rocks; 
  	 
- 	//GUI�� ���� JLabel���� 
- 	public 	JLabel UserLabel, RockLabel[]; 
- 	public JLabel UserInfo, RockInfo; 
+ 	//GUI를 위한 JLabel변수 
+ 	/*---------------------------------
+ 	 Issue1) 이 부분을 Label이 아니라 그림으로 처리
+ 	 ---------------------------------*/
+ 	public 	JLabel UserLabel; 
+ 	public JLabel UserInfo; 
+ 	public JLabel time;
  	public JTextField UserLocation; 
  	public JButton exit; 
  
  
  	GameMain(){ 
- 		//Frame ���� 
+ 		//Frame 생성 
  		Scanner s = new Scanner(System.in);
  		setTitle(GameMap.strGameTitle); 
  		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -51,15 +55,16 @@ import game.jewelry.hunter.objects.Rock;
  		 
  		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
  		 
- 		//���ΰ� ��ü ���� 
- 		User= new Player("�÷��̾�",2,2); 
- 		System.out.printf("%s�� �ʱ� ��ġ�� (%d, %d) �Դϴ�. \n", User.name, User.getX(), User.getY()); 
+ 		//주인공 객체 생성 
+ 		User= new Player("플레이어",0,0); 
+ 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", User.name, User.getX(), User.getY()); 
  		 
- 		//���ΰ� JLabel ��ü ���� �� Frame�� Add 
+		//주인공 JLabel 객체 생성 및 Frame에 Add 
  		GameGround.add(User.getObjectDisplay()); 
+
  		 
- 		//������ġ�� TextBox�� ��� 
- 		UserInfo= new JLabel("���� ��ġ: (0, 0)"); 
+ 		//유저위치를 TextBox에 출력 
+ 		UserInfo= new JLabel("유저 위치: (0, 0)"+ " / 점수: " + User.totalScore);  
  		UserInfo.setLocation(10,20); 
  		UserInfo.setSize(150,20); 
  		GameMessage.add(UserInfo); 
@@ -89,8 +94,17 @@ import game.jewelry.hunter.objects.Rock;
  		Jewelry jewelry = new Jewelry("보석1",2,2,100);
  		GameGround.add(jewelry.getObjectDisplay());
  		
- 		//�����ư 
- 		exit = new JButton("����"); 
+ 		
+ 		//time test
+ 		time= new JLabel("time");
+ 		time.setLocation(180,180);
+ 		time.setSize(200,200);
+ 		time.setFont(new Font("Serif", Font.BOLD, 200));
+ 		GameGround.add(time);
+ 		(new TimeThread()).start();
+ 		
+ 		//종료버튼
+ 		exit = new JButton("종료"); 
  		exit.setLocation(400,15); 
  		exit.setSize(80,30);  
  		GameMessage.add(exit); 
@@ -118,19 +132,31 @@ import game.jewelry.hunter.objects.Rock;
  			case KeyEvent.VK_RIGHT: User.move(+User.MOVING_UNIT, 0); break; 
  			default: return;  
  			} 
- 			System.out.printf("%s�� (%d,%d)�� �̵��߽��ϴ�. \n", User.name, (User.getX()/100), (User.getY()/100)); 
- 			UserInfo.setText("���� ��ġ: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
+			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()/100), (User.getY()/100)); 
+			UserInfo.setText("유저 위치: (" + (User.getX()/100) +", " + (User.getY()/100) + ")" + " / 점수: " + User.totalScore ); 
+
  		} 
  	} 
  	 
  	class GameActionListener implements ActionListener{ 
  		public void actionPerformed(ActionEvent e){ 
  			JButton b = (JButton)e.getSource(); 
- 			if(b.getText().equals("����")) 
+ 			if(b.getText().equals("종료")) 
  				System.exit(0); 
  		} 
  	} 
  
+ 	class TimeThread extends Thread{
+ 		public void run(){
+ 			for(int i=10; i>=0; i--){
+ 				try {Thread.sleep(1000);}
+ 				catch (InterruptedException e)
+ 				{ e.printStackTrace(); }	
+ 				time.setText(i + " ");
+ 			}
+ 		}
+ 	}
+ 	
  	public static void main(String args[]){ 
  		new GameMain(); 
  	} 

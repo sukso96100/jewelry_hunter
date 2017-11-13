@@ -49,6 +49,4 @@ public class GameObject {
 		return "GameObject [name=" + name + ", x=" + x + ", y=" + y + "]";
 	}
 	
-	
-	
 }

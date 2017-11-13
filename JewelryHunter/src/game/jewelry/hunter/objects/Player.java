@@ -1,6 +1,7 @@
 package game.jewelry.hunter.objects;
 public class Player extends GameObject {
 	public static final int MOVING_UNIT=100; 
+	public int totalScore=0;
 	
 	public Player(String name, int x, int y){
 		super(name, x, y);
@@ -13,6 +14,5 @@ public class Player extends GameObject {
 			super.y += y;
 		this.objectDisplay.setLocation(this.x, this.y); 
 	}
-	
 	
 }
