@@ -1,6 +1,5 @@
 package game.jewelry.hunter.objects;
-public class Player extends GameObject {
-	public static final int MOVING_UNIT=100; 
+public class Player extends GameObject { 
 	public int totalScore=0;
 	
 	public Player(String name, int x, int y){
@@ -8,10 +7,11 @@ public class Player extends GameObject {
 	}
 
 	public void move(int x, int y){
-		if((super.x + x) >= 0 && (super.x+x) <= (GameMap.WIDTH-GameObject.WIDTH))
+		if((super.x + x) >= 0 && (super.x+x) <= 4)
 			super.x += x;
-		if((super.y + y) >= 0 && (super.y+y) <= (GameMap.HEIGHT-GameObject.HEIGHT))
+		if((super.y + y) >= 0 && (super.y+y) <= 4)
 			super.y += y;
+		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 	}
 	
 }

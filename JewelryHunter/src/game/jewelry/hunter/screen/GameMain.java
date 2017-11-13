@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
+import game.jewelry.hunter.objects.Jewelry;
 import game.jewelry.hunter.objects.Player;
 import game.jewelry.hunter.objects.Rock; 
  
@@ -58,18 +59,40 @@ import game.jewelry.hunter.objects.Rock;
  		User= new Player("플레이어",0,0); 
  		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", User.name, User.getX(), User.getY()); 
  		 
- 		//주인공 JLabel 객체 생성 및 Frame에 Add 
- 		UserLabel= new JLabel(User.name); 
- 		UserLabel.setLocation(User.getX(),User.getY()); 
- 		UserLabel.setSize(GameObject.WIDTH,GameObject.HEIGHT); 
- 		UserLabel.setForeground(Color.BLUE); 
- 		GameGround.add(UserLabel); 
+		//주인공 JLabel 객체 생성 및 Frame에 Add 
+ 		GameGround.add(User.getObjectDisplay()); 
+
  		 
  		//유저위치를 TextBox에 출력 
  		UserInfo= new JLabel("유저 위치: (0, 0)"+ " / 점수: " + User.totalScore);  
  		UserInfo.setLocation(10,20); 
  		UserInfo.setSize(150,20); 
  		GameMessage.add(UserInfo); 
+ 		
+ 		//Rock ��ü ������ Console�� ��� ���
+// 		Rocks = new Rock[Rock.RockNum];
+ 		
+// 		for(int i=0; i<Rock.RockNum;i++){
+// 			Rocks[i] = new Rock();
+// 			System.out.printf("%s�̻����Ǿ���, ��ġ��(%3d, %3d)�Դϴ�. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
+// 		}
+ 		
+ 		//Rock JLable ��ü ���� �� Frame�� Add
+// 		RockLabel = new JLabel[Rock.RockNum];
+// 		for(int i =0; i<Rock.RockNum; i++){
+// 			RockLabel[i] = new JLabel(Rocks[i].name);
+// 			RockLabel[i].setLocation(Rocks[i].getX(),Rocks[i].getY());
+// 			RockLabel[i].setSize(GameObject.WIDTH, GameObject.HEIGHT);
+// 			RockLabel[i].setForeground(Color.darkGray);
+// 		}
+ 		//Rock�� TextBox�� ��� 
+// 		RockInfo= new JLabel("���� ��ġ: (0, 0)"); 
+// 		RockInfo.setLocation(10,20); 
+// 		RockInfo.setSize(150,20); 
+// 		GameMessage.add(RockInfo); 
+ 		
+ 		Jewelry jewelry = new Jewelry("보석1",2,2,100);
+ 		GameGround.add(jewelry.getObjectDisplay());
  		
  		//time test
  		time= new JLabel("time");
@@ -102,15 +125,15 @@ import game.jewelry.hunter.objects.Rock;
  		public void keyPressed(KeyEvent e){ 
  			int keyCode = e.getKeyCode(); 
  			switch(keyCode){ 
- 			case KeyEvent.VK_UP: User.move(0, -User.MOVING_UNIT); break; 
- 			case KeyEvent.VK_DOWN: User.move(0, +User.MOVING_UNIT); break; 
- 			case KeyEvent.VK_LEFT: User.move(-User.MOVING_UNIT, 0); break; 
- 			case KeyEvent.VK_RIGHT: User.move(+User.MOVING_UNIT, 0); break; 
+ 			case KeyEvent.VK_UP: User.move(0, -1); break; 
+ 			case KeyEvent.VK_DOWN: User.move(0, +1); break; 
+ 			case KeyEvent.VK_LEFT: User.move(-1, 0); break; 
+ 			case KeyEvent.VK_RIGHT: User.move(+1, 0); break; 
  			default: return;  
  			} 
- 			UserLabel.setLocation(User.getX(),User.getY()); 
- 			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()/100), (User.getY()/100)); 
- 			UserInfo.setText("유저 위치: (" + (User.getX()/100) +", " + (User.getY()/100) + ")" + " / 점수: " + User.totalScore ); 
+			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
+			UserInfo.setText("유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore ); 
+
  		} 
  	} 
  	 
