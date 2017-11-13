@@ -9,7 +9,7 @@ public class GameObject {
 	public String name;
 	public int x, y;
 	protected JLabel objectDisplay;
-	public static final int WIDTH=100, HEIGHT=100;
+	public static final int WIDTH=90, HEIGHT=90;
 	
 	public GameObject(String name, int x, int y) {
 		this.name=name;
