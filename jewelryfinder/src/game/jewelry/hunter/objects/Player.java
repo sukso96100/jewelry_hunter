@@ -11,6 +11,7 @@ public class Player extends GameObject {
 			super.x += x;
 		if((super.y + y) >= 0 && (super.y+y) <= (GameMap.HEIGHT-GameObject.HEIGHT))
 			super.y += y;
+		this.objectDisplay.setLocation(this.x, this.y); 
 	}
 	
 	

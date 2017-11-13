@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
+import game.jewelry.hunter.objects.Jewelry;
 import game.jewelry.hunter.objects.Player;
 import game.jewelry.hunter.objects.Rock; 
  
@@ -55,11 +56,7 @@ import game.jewelry.hunter.objects.Rock;
  		System.out.printf("%s�� �ʱ� ��ġ�� (%d, %d) �Դϴ�. \n", User.name, User.getX(), User.getY()); 
  		 
  		//���ΰ� JLabel ��ü ���� �� Frame�� Add 
- 		UserLabel= new JLabel(User.name); 
- 		UserLabel.setLocation(User.getX(),User.getY()); 
- 		UserLabel.setSize(GameObject.WIDTH,GameObject.HEIGHT); 
- 		UserLabel.setForeground(Color.BLUE); 
- 		GameGround.add(UserLabel); 
+ 		GameGround.add(User.getObjectDisplay()); 
  		 
  		//������ġ�� TextBox�� ��� 
  		UserInfo= new JLabel("���� ��ġ: (0, 0)"); 
@@ -68,26 +65,29 @@ import game.jewelry.hunter.objects.Rock;
  		GameMessage.add(UserInfo); 
  		
  		//Rock ��ü ������ Console�� ��� ���
- 		Rocks = new Rock[Rock.RockNum];
+// 		Rocks = new Rock[Rock.RockNum];
  		
- 		for(int i=0; i<Rock.RockNum;i++){
- 			Rocks[i] = new Rock();
- 			System.out.printf("%s�̻����Ǿ���, ��ġ��(%3d, %3d)�Դϴ�. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
- 		}
+// 		for(int i=0; i<Rock.RockNum;i++){
+// 			Rocks[i] = new Rock();
+// 			System.out.printf("%s�̻����Ǿ���, ��ġ��(%3d, %3d)�Դϴ�. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
+// 		}
  		
  		//Rock JLable ��ü ���� �� Frame�� Add
- 		RockLabel = new JLabel[Rock.RockNum];
- 		for(int i =0; i<Rock.RockNum; i++){
- 			RockLabel[i] = new JLabel(Rocks[i].name);
- 			RockLabel[i].setLocation(Rocks[i].getX(),Rocks[i].getY());
- 			RockLabel[i].setSize(GameObject.WIDTH, GameObject.HEIGHT);
- 			RockLabel[i].setForeground(Color.darkGray);
- 		}
+// 		RockLabel = new JLabel[Rock.RockNum];
+// 		for(int i =0; i<Rock.RockNum; i++){
+// 			RockLabel[i] = new JLabel(Rocks[i].name);
+// 			RockLabel[i].setLocation(Rocks[i].getX(),Rocks[i].getY());
+// 			RockLabel[i].setSize(GameObject.WIDTH, GameObject.HEIGHT);
+// 			RockLabel[i].setForeground(Color.darkGray);
+// 		}
  		//Rock�� TextBox�� ��� 
- 		RockInfo= new JLabel("���� ��ġ: (0, 0)"); 
- 		RockInfo.setLocation(10,20); 
- 		RockInfo.setSize(150,20); 
- 		GameMessage.add(RockInfo); 
+// 		RockInfo= new JLabel("���� ��ġ: (0, 0)"); 
+// 		RockInfo.setLocation(10,20); 
+// 		RockInfo.setSize(150,20); 
+// 		GameMessage.add(RockInfo); 
+ 		
+ 		Jewelry jewelry = new Jewelry("보석1",2,2,100);
+ 		GameGround.add(jewelry.getObjectDisplay());
  		
  		//�����ư 
  		exit = new JButton("����"); 
@@ -118,7 +118,6 @@ import game.jewelry.hunter.objects.Rock;
  			case KeyEvent.VK_RIGHT: User.move(+User.MOVING_UNIT, 0); break; 
  			default: return;  
  			} 
- 			UserLabel.setLocation(User.getX(),User.getY()); 
  			System.out.printf("%s�� (%d,%d)�� �̵��߽��ϴ�. \n", User.name, (User.getX()/100), (User.getY()/100)); 
  			UserInfo.setText("���� ��ġ: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
  		} 
