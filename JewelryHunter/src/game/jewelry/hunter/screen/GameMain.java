@@ -125,12 +125,13 @@ import game.jewelry.hunter.objects.Rock;
  
  	class TimeThread extends Thread{
  		public void run(){
- 			for(int i=10; i>=0; i--){
+ 			for(int i=5; i>=0; i--){
  				try {Thread.sleep(1000);}
  				catch (InterruptedException e)
  				{ e.printStackTrace(); }	
  				time.setText(i + " ");
  			}
+ 			System.out.println("시간초과");
  		}
  	}
  	
