@@ -17,6 +17,10 @@ public class Player extends GameObject {
 		super.x=x;
 		super.y=y;
 	}
+	
+	public void power(int power){
+		super.power +=power;
+	}
 
 	public void move(int x, int y){
 		if((super.x + x) >= 0 && (super.x+x) <= (GameMap.WIDTH-GameObject.WIDTH))

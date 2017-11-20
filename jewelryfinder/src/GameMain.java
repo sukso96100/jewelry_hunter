@@ -45,7 +45,7 @@ public class GameMain extends JFrame {
 		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
 
 		//ÁÖÀÎ°ø °´Ã¼ »ı¼º 
-		User= new Player("ÇÃ·¹ÀÌ¾î",2,2); 
+		User= new Player("ÇÃ·¹ÀÌ¾î",0,0); 
 		System.out.printf("%sÀÇ ÃÊ±â À§Ä¡´Â (%d, %d) ÀÔ´Ï´Ù. \n", User.name, User.getX(), User.getY()); 
 		//	System.out.printf("ÇöÀç Á¡¼ö: ", User.Score);
 
@@ -66,8 +66,9 @@ public class GameMain extends JFrame {
 		Rocks = new Rock[Rock.RockNum];
 		for(int i=0; i<Rock.RockNum; i++){
 			Rocks[i] = new Rock(Rock.RockName[i],Rock.power);
-			System.out.printf("%sÀÌ»ı¼ºµÇ¾ú°í, À§Ä¡´Â(%3d, %3d)ÀÔ´Ï´Ù. \n",Rocks[i].RockName,
-					Rocks[i].getX(), Rocks[i].getY()); 
+			System.out.printf("%sÀÌ»ı¼ºµÇ¾ú°í, À§Ä¡´Â(%d, %d)ÀÔ´Ï´Ù. \n",Rocks[i].name,
+					//À§Ä¡¯H 200À¸·Î ±×³É ÁöÁ¤ÇØÁÜ
+					(200+100*i)/100,(200+100*i)/100); 
 		}
 
 		//Rock JLable °´Ã¼ »ı¼º ¹× Frame¿¡ Add
@@ -75,17 +76,12 @@ public class GameMain extends JFrame {
 
 		for(int i=0; i<Rock.RockNum; i++){
 			RockLabel[i] = new JLabel(Rocks[i].name);
-			RockLabel[i].setLocation(Rocks[i].getX(), Rocks[i].getY());
+			RockLabel[i].setLocation(200+100*i, 200+100*i);
 			RockLabel[i].setSize(GameObject.WIDTH,GameObject.HEIGHT);
 			RockLabel[i].setForeground(Color.GREEN);
 			GameGround.add(RockLabel[i]);
 		}
 
-		//Rock¸¦ TextBox¿¡ Ãâ·Â 
-//		RockInfo= new JLabel("À¯Àú À§Ä¡: (0, 0)"); 
-//		RockInfo.setLocation(10,20); 
-//		RockInfo.setSize(150,20); 
-//		GameMessage.add(RockInfo); 
 
 		//Á¾·á¹öÆ° 
 		exit = new JButton("Á¾·á"); 
@@ -114,16 +110,25 @@ public class GameMain extends JFrame {
 			case KeyEvent.VK_DOWN: User.move(0, +User.MOVING_UNIT); break; 
 			case KeyEvent.VK_LEFT: User.move(-User.MOVING_UNIT, 0); break; 
 			case KeyEvent.VK_RIGHT: User.move(+User.MOVING_UNIT, 0); break; 
+			case KeyEvent.VK_TAB: User.power(+50);break;
 			default: return;  
 			} 
 			UserLabel.setLocation(User.getX(),User.getY()); 
-			System.out.printf("%s°¡ (%d,%d)·Î ÀÌµ¿Çß½À´Ï´Ù. \n", User.name, (User.getX()/100), (User.getY()/100)); 
-			UserInfo.setText("À¯Àú À§Ä¡: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
+			for(int i =0; i<Rock.RockNum; ++i ){
+				if((User.getX() == (200+100*i)) &&(User.getY() == (200+100*i))){
+					System.out.println("À¯Àú°¡ ¿òÁ÷ÀÏ ¼ö ¾ø½À´Ï´Ù.");
+					break;
+				}else{
+					System.out.printf("%s°¡ (%d,%d)·Î ÀÌµ¿Çß½À´Ï´Ù. \n", User.name, (User.getX()/100), (User.getY()/100)); 
+					UserInfo.setText("À¯Àú À§Ä¡: (" + (User.getX()/100) +", " + (User.getY()/100) + ")"); 
+				}
+			}
 			//µ¹ ºÎ¼ö±â
 			for(int i=0; i<Rock.RockNum;i++){
 				if(Rocks[i]!=null)
-					if((User.getX() == Rocks[i].getX())&&(User.getY() == Rocks[i].getY())){
+					if((User.getX() == (200+100*i))&&(User.getY() == (200+100*i))){
 						int power = User.getPower() - Rocks[i].getPower();
+						System.out.println(User .getPower());
 						User.setPower(power);
 						UserInfo.setText("±â»çÆÄ¿ö: "+User.getPower());
 						System.out.println("µ¹ÀÌ ºÎ¼­Áø´Ù.");

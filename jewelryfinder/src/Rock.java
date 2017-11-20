@@ -1,4 +1,4 @@
-
+import java.util.Random;
 
 public  class Rock extends GameObject{
 	//돌의 개수를 지정
@@ -13,11 +13,17 @@ public  class Rock extends GameObject{
 	}
 	public Rock(String name){
 		super.name = name;
+		
 	}
 	
 	public Rock(String name, int power){
 		super.name=name;
 		super.power=power;
+		Random r = new Random();
+//		this.x=200;
+//		this.y=200;
+//		this.x = (r.nextInt(GameMap.WIDTH-this.WIDTH/10*10));
+//		this.y = (r.nextInt(GameMap.WIDTH-this.WIDTH/10*10));
 	}
 	
 }

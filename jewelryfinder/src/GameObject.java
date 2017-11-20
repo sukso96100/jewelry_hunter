@@ -2,7 +2,7 @@ import java.util.Random;
 public class GameObject {
 
 	public String name;
-	public int x, y, score,point,power;
+	public int x, y, score,point,power =0;
 	public static final int WIDTH=90, HEIGHT=90;
 
 	public GameObject(){
