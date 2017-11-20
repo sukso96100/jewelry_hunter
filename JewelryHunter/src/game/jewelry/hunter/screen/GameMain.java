@@ -1,6 +1,9 @@
 package game.jewelry.hunter.screen;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
  import java.awt.event.*; 
  import java.awt.*; 
@@ -30,6 +33,8 @@ import game.jewelry.hunter.objects.Rock;
  	public JLabel time;
  	public JTextField UserLocation; 
  	public JButton exit; 
+ 	ArrayList<GameObject> objectsArray = new ArrayList<>();
+ 	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
  
  
  	GameMain(){ 
@@ -43,6 +48,8 @@ import game.jewelry.hunter.objects.Rock;
  		GameMessage = new JPanel(); 
  		GameGround.setLayout(null); 
  		GameMessage.setLayout(null); 
+ 		
+ 		
  		 
  		GameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
  		System.out.printf("GameGround: %d, %d, \n", GameGround.getWidth(), GameGround.getHeight()); 
@@ -69,8 +76,27 @@ import game.jewelry.hunter.objects.Rock;
  		UserInfo.setSize(150,20); 
  		GameMessage.add(UserInfo); 
  		
- 		Jewelry jewelry = new Jewelry("보석1",2,2,100);
- 		GameGround.add(jewelry.getObjectDisplay());
+ 		// 보석 무작위 위치에 추가.
+ 		for(int i=0; i<5; i++) {
+ 			int x = (int) (Math.random() * 4);
+ 			int y = (int) (Math.random() * 4);
+ 			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
+ 			GameGround.add(jewelry.getObjectDisplay());
+ 			// Get Array of objects of the point
+ 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 			boolean hasJewelry = false;
+ 			if(objArray==null) objArray = new ArrayList<GameObject>();
+ 			for(GameObject obj : objArray) {
+ 				if(obj instanceof Jewelry) {
+ 					hasJewelry = true;
+ 					break;
+ 				}
+ 			}
+ 			if(!hasJewelry) {
+ 				objArray.add(jewelry);
+ 			}
+ 			objectsMap.put(x+","+y, objArray);
+ 		}
  		
  		//time test
  		time= new JLabel("time");
@@ -98,7 +124,7 @@ import game.jewelry.hunter.objects.Rock;
  	} 
  
  
- 	//KeyEvent 
+ 	// 키보드 이벤트 처리 
  	class GameKeyListener extends KeyAdapter{ 
  		public void keyPressed(KeyEvent e){ 
  			int keyCode = e.getKeyCode(); 
@@ -111,7 +137,21 @@ import game.jewelry.hunter.objects.Rock;
  			} 
 			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
 			UserInfo.setText("유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore ); 
-
+			
+			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
+			// 해당 위치 항목 처리 
+			if(objArray!=null) {
+				for(GameObject obj : objArray) {
+	 				if(obj instanceof Jewelry) {
+	 					User.increaseScore(((Jewelry)obj).getScore());
+	 					objArray.remove(obj);
+	 					GameGround.remove(obj.getObjectDisplay());
+	 					break;
+	 				}
+	 			}
+			}
+			
+			
  		} 
  	} 
  	 
