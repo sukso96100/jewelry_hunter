@@ -16,8 +16,8 @@ import javax.swing.JOptionPane;
 
 public class IntroWindow extends JFrame implements ActionListener {
 
-	public static final int SCREEN_WIDTH = 1200;
-	public static final int SCREEN_HEIGHT = 720;
+	public static final int SCREEN_WIDTH = 500;
+	public static final int SCREEN_HEIGHT = 500;
 
 	private Panel intro, start;
 	private JLabel title;
