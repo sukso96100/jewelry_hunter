@@ -76,28 +76,6 @@ import game.jewelry.hunter.objects.Rock;
  		UserInfo.setSize(150,20); 
  		GameMessage.add(UserInfo); 
  		
- 		//Rock ��ü ������ Console�� ��� ���
-// 		Rocks = new Rock[Rock.RockNum];
- 		
-// 		for(int i=0; i<Rock.RockNum;i++){
-// 			Rocks[i] = new Rock();
-// 			System.out.printf("%s�̻����Ǿ���, ��ġ��(%3d, %3d)�Դϴ�. \n", Rocks[i].RockName[i], Rocks[i].getX(), Rocks[i].getY());
-// 		}
- 		
- 		//Rock JLable ��ü ���� �� Frame�� Add
-// 		RockLabel = new JLabel[Rock.RockNum];
-// 		for(int i =0; i<Rock.RockNum; i++){
-// 			RockLabel[i] = new JLabel(Rocks[i].name);
-// 			RockLabel[i].setLocation(Rocks[i].getX(),Rocks[i].getY());
-// 			RockLabel[i].setSize(GameObject.WIDTH, GameObject.HEIGHT);
-// 			RockLabel[i].setForeground(Color.darkGray);
-// 		}
- 		//Rock�� TextBox�� ��� 
-// 		RockInfo= new JLabel("���� ��ġ: (0, 0)"); 
-// 		RockInfo.setLocation(10,20); 
-// 		RockInfo.setSize(150,20); 
-// 		GameMessage.add(RockInfo); 
- 		
  		// 보석 무작위 위치에 추가.
  		for(int i=0; i<5; i++) {
  			int x = (int) (Math.random() * 4);
@@ -219,12 +197,13 @@ import game.jewelry.hunter.objects.Rock;
  
  	class TimeThread extends Thread{
  		public void run(){
- 			for(int i=10; i>=0; i--){
+ 			for(int i=5; i>=0; i--){
  				try {Thread.sleep(1000);}
  				catch (InterruptedException e)
  				{ e.printStackTrace(); }	
  				time.setText(i + " ");
  			}
+ 			System.out.println("시간초과");
  		}
  	}
  	
