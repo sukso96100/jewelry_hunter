@@ -98,6 +98,28 @@ import game.jewelry.hunter.objects.Rock;
  			objectsMap.put(x+","+y, objArray);
  		}
  		
+ 		// 바위 무작위 위치에 추가 
+ 		for(int i=0; i<5; i++) {
+ 			int x = (int) (Math.random() * 4);
+ 			int y = (int) (Math.random() * 4);
+ 			Rock rock = new Rock("바위"+i,x,y,100);
+ 			GameGround.add(rock.getObjectDisplay());
+ 			// Get Array of objects of the point
+ 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 			boolean hasRock = false;
+ 			if(objArray==null) objArray = new ArrayList<GameObject>();
+ 			for(GameObject obj : objArray) {
+ 				if(obj instanceof Rock) {
+ 					hasRock = true;
+ 					break;
+ 				}
+ 			}
+ 			if(!hasRock) {
+ 				objArray.add(rock);
+ 			}
+ 			objectsMap.put(x+","+y, objArray);
+ 		}
+ 		
  		//time test
  		time= new JLabel("time");
  		time.setLocation(180,180);
@@ -128,19 +150,32 @@ import game.jewelry.hunter.objects.Rock;
  	class GameKeyListener extends KeyAdapter{ 
  		public void keyPressed(KeyEvent e){ 
  			int keyCode = e.getKeyCode(); 
+ 			int moveX=0, moveY=0;
  			switch(keyCode){ 
- 			case KeyEvent.VK_UP: User.move(0, -1); break; 
- 			case KeyEvent.VK_DOWN: User.move(0, +1); break; 
- 			case KeyEvent.VK_LEFT: User.move(-1, 0); break; 
- 			case KeyEvent.VK_RIGHT: User.move(+1, 0); break; 
- 			default: return;  
+	 			case KeyEvent.VK_UP: moveY= -1; break; 
+	 			case KeyEvent.VK_DOWN: moveY= +1; break; 
+	 			case KeyEvent.VK_LEFT: moveX= -1; break; 
+	 			case KeyEvent.VK_RIGHT: moveX= +1; break; 
+	 			default: return;  
  			} 
+ 			User.move(moveX, moveY);
 			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
 			UserInfo.setText("유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore ); 
 			
 			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
 			// 해당 위치 항목 처리 
 			if(objArray!=null) {
+				for(GameObject obj : objArray) {
+	 				if(obj instanceof Rock) {
+	 					((Rock) obj).hit(10);
+	 					if(((Rock) obj).getDurability() <= 0) {
+	 						objArray.remove(obj);
+	 						GameGround.remove(obj.getObjectDisplay());
+	 					}
+	 					User.move(-moveX, -moveY);
+	 					return;
+	 				}
+	 			}
 				for(GameObject obj : objArray) {
 	 				if(obj instanceof Jewelry) {
 	 					User.increaseScore(((Jewelry)obj).getScore());
@@ -150,8 +185,6 @@ import game.jewelry.hunter.objects.Rock;
 	 				}
 	 			}
 			}
-			
-			
  		} 
  	} 
  	 
