@@ -120,6 +120,28 @@ import game.jewelry.hunter.objects.Rock;
  			objectsMap.put(x+","+y, objArray);
  		}
  		
+ 		// 바위 무작위 위치에 추가 
+ 		for(int i=0; i<5; i++) {
+ 			int x = (int) (Math.random() * 4);
+ 			int y = (int) (Math.random() * 4);
+ 			Rock rock = new Rock("바위"+i,x,y,100);
+ 			GameGround.add(rock.getObjectDisplay());
+ 			// Get Array of objects of the point
+ 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 			boolean hasRock = false;
+ 			if(objArray==null) objArray = new ArrayList<GameObject>();
+ 			for(GameObject obj : objArray) {
+ 				if(obj instanceof Rock) {
+ 					hasRock = true;
+ 					break;
+ 				}
+ 			}
+ 			if(!hasRock) {
+ 				objArray.add(rock);
+ 			}
+ 			objectsMap.put(x+","+y, objArray);
+ 		}
+ 		
  		//time test
  		time= new JLabel("time");
  		time.setLocation(180,180);
@@ -163,6 +185,16 @@ import game.jewelry.hunter.objects.Rock;
 			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
 			// 해당 위치 항목 처리 
 			if(objArray!=null) {
+				for(GameObject obj : objArray) {
+	 				if(obj instanceof Rock) {
+	 					((Rock) obj).hit(100);
+	 					if(((Rock) obj).getDurability() <= 0) {
+	 						objArray.remove(obj);
+	 					}
+	 					User.moveBack();
+	 					break;
+	 				}
+	 			}
 				for(GameObject obj : objArray) {
 	 				if(obj instanceof Jewelry) {
 	 					User.increaseScore(((Jewelry)obj).getScore());
