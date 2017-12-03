@@ -164,8 +164,8 @@ import game.jewelry.hunter.objects.Rock;
 	 			default: return;  
  			} 
  			User.move(moveX, moveY);
-			System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
-			UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore);  
+ 			//System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
+ 			UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore);  
 
 			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
 			// 유저 오브젝트 상호 작용 감지 
@@ -192,19 +192,39 @@ import game.jewelry.hunter.objects.Rock;
 	 			}
 			}
 
-			//보석 감지 Test, 임의의 위치 0,0
-			if(User.x <= 2  && User.y <= 2)
-				if(User.x <=1 && User.y <=1)
-					System.out.println("매우 가까움: 붉은색");
-				else
-					System.out.println("가까움: 노란색");
-			else
-				System.out.println("탐지 불가능: 초록색");
+			//보석 감지 Test
+			boolean detected=false;
+
+			for(int i = User.x-1; i <= User.x+1; i++)
+				for(int j = User.y-1; j <= User.y+1; j++){
+					if(!detected){
+						objArray = objectsMap.get(i+","+j);
+						if(objArray!=null) {
+							for(GameObject obj : objArray)
+								if(obj instanceof Jewelry){
+									System.out.println("매우 가까움: 초록색");
+									detected=true;
+								}
+						}
+					}
+				}
+			for(int i = User.x-2; i <= User.x+2; i++)
+				for(int j = User.y-2; j <= User.y+2; j++){
+					if(!detected){
+						objArray = objectsMap.get(i+","+j);
+						if(objArray!=null) {
+							for(GameObject obj : objArray)
+								if(obj instanceof Jewelry){
+									System.out.println("가까움: 노란색");
+									detected = true;
+								} 
+						}
+					}
+				}
 
  		} 
+ 	}
 
- 	} 
- 	 
  	class GameActionListener implements ActionListener{ 
  		public void actionPerformed(ActionEvent e){ 
  			JButton b = (JButton)e.getSource(); 
