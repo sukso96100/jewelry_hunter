@@ -129,11 +129,6 @@ import game.jewelry.hunter.objects.Rock;
  		}
  		
  		//time test
- 		time= new JLabel("time");
- 		time.setLocation(180,180);
- 		time.setSize(200,200);
- 		time.setFont(new Font("Serif", Font.BOLD, 200));
- 		GameGround.add(time);
  		(new TimeThread()).start();
 
 
