@@ -13,6 +13,7 @@ public class Player extends GameObject {
 			super.y += y;
 		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 	}
+
 	
 	public void increaseScore(int score) {
 		this.totalScore += score;
