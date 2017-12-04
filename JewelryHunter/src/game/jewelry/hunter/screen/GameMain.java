@@ -40,7 +40,7 @@ public class GameMain extends JFrame {
  	 ---------------------------------*/
 	public 	JLabel UserLabel ,JewelryR,JewelryGre, JewelryGra,JewelryY, Rockimg; 
 	public JLabel UserInfo; 
-	public JLabel time;
+	public int time;
 	public JTextField UserLocation; 
 	public JButton exit; 
 	ArrayList<GameObject> objectsArray = new ArrayList<>();
@@ -73,10 +73,10 @@ public class GameMain extends JFrame {
 		JewelryGre.setIcon(new ImageIcon(green));
 		Image yellow = new ImageIcon(this.getClass().getResource("/yellow.png")).getImage();
 		JewelryY.setIcon(new ImageIcon(yellow));
-		
+
 		Image img = new ImageIcon(this.getClass().getResource("/wooden_chess-wallpaper.jpg")).getImage();
 		GameGround.setIcon(new ImageIcon(img));
-		
+
 		GameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
 		System.out.printf("GameGround: %d, %d, \n", GameGround.getWidth(), GameGround.getHeight()); 
 
@@ -151,11 +151,6 @@ public class GameMain extends JFrame {
 		}
 
 		//time test
-		time= new JLabel("time");
-		time.setLocation(180,180);
-		time.setSize(200,200);
-		time.setFont(new Font("Serif", Font.BOLD, 200));
-		GameGround.add(time);
 		(new TimeThread()).start();
 
 		//종료버튼
@@ -173,78 +168,107 @@ public class GameMain extends JFrame {
 		setResizable(false); 
 		setVisible(true); 
 		GameGround.requestFocus(); 
-	
-	
-	}
-	
 
+
+	}
 
 	// 키보드 이벤트 처리 
-	class GameKeyListener extends KeyAdapter{ 
-		public void keyPressed(KeyEvent e){ 
-			int keyCode = e.getKeyCode(); 
-			int moveX=0, moveY=0;
-			switch(keyCode){ 
-			case KeyEvent.VK_UP: moveY= -1; break; 
-			case KeyEvent.VK_DOWN: moveY= +1; break; 
-			case KeyEvent.VK_LEFT: moveX= -1; break; 
-			case KeyEvent.VK_RIGHT: moveX= +1; break; 
-			default: return;  
-			} 
-			User.move(moveX, moveY);
-			System.out.printf("플레이어가 (%d,%d)로 이동했습니다. \n", (User.getX()), (User.getY())); 
-			UserInfo.setText("유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore ); 
+ 	class GameKeyListener extends KeyAdapter{ 
+ 		
+ 		public void keyPressed(KeyEvent e){ 
+ 			int keyCode = e.getKeyCode(); 
+ 			int moveX=0, moveY=0;
+ 			switch(keyCode){ 
+	 			case KeyEvent.VK_UP: moveY= -1; break; 
+	 			case KeyEvent.VK_DOWN: moveY= +1; break; 
+	 			case KeyEvent.VK_LEFT: moveX= -1; break; 
+	 			case KeyEvent.VK_RIGHT: moveX= +1; break; 
+	 			default: return;  
+ 			} 
+ 			User.move(moveX, moveY);
+ 			//System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
+ 			UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore);  
 
 			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
-			// 해당 위치 항목 처리 
+			// 유저 오브젝트 상호 작용 감지 
 			if(objArray!=null) {
 				for(GameObject obj : objArray) {
-					if(obj instanceof Rock) {
-						((Rock) obj).hit(10);
-						if(((Rock) obj).getDurability() <= 0) {
-							objArray.remove(obj);
-							GameGround.remove(obj.getObjectDisplay());
-						}
-						User.move(-moveX, -moveY);
-						return;
-					}
-				}
+
+	 				if(obj instanceof Rock) {
+	 					((Rock) obj).hit(10);
+	 					if(((Rock) obj).getDurability() <= 0) {
+	 						objArray.remove(obj);
+	 						GameGround.remove(obj.getObjectDisplay());
+	 					}
+	 					User.move(-moveX, -moveY);
+	 					return;
+	 				}
+	 			}
 				for(GameObject obj : objArray) {
-					if(obj instanceof Jewelry) {
-						User.increaseScore(((Jewelry)obj).getScore());
-						objArray.remove(obj);
-						GameGround.remove(obj.getObjectDisplay());
-						break;
+	 				if(obj instanceof Jewelry) {
+	 					User.increaseScore(((Jewelry)obj).getScore());
+	 					objArray.remove(obj);
+	 					GameGround.remove(obj.getObjectDisplay());
+	 					break;
+	 				}
+	 			}
+			}
+
+			//보석 감지 Test
+			boolean detected=false;
+
+			for(int i = User.x-1; i <= User.x+1; i++)
+				for(int j = User.y-1; j <= User.y+1; j++){
+					if(!detected){
+						objArray = objectsMap.get(i+","+j);
+						if(objArray!=null) {
+							for(GameObject obj : objArray)
+								if(obj instanceof Jewelry){
+									System.out.println("매우 가까움: 초록색");
+									detected=true;
+								}
+						}
 					}
 				}
-			}
-		} 
-	} 
+			for(int i = User.x-2; i <= User.x+2; i++)
+				for(int j = User.y-2; j <= User.y+2; j++){
+					if(!detected){
+						objArray = objectsMap.get(i+","+j);
+						if(objArray!=null) {
+							for(GameObject obj : objArray)
+								if(obj instanceof Jewelry){
+									System.out.println("가까움: 노란색");
+									detected = true;
+								} 
+						}
+					}
+				}
 
-	class GameActionListener implements ActionListener{ 
-		public void actionPerformed(ActionEvent e){ 
-			JButton b = (JButton)e.getSource(); 
-			if(b.getText().equals("종료")) 
-				System.exit(0); 
-		} 
-	} 
+ 		} 
+ 	}
 
-	class TimeThread extends Thread{
-		public void run(){
-			for(int i=5; i>=0; i--){
-				try {Thread.sleep(1000);}
-				catch (InterruptedException e)
-				{ e.printStackTrace(); }	
-				time.setText(i + " ");
-			}
-			System.out.println("시간초과");
-		}
-	}	
-
-	
-	public static void main(String args[]){ 
-		
-		new GameMain();
-	} 
-} 
-
+ 	class GameActionListener implements ActionListener{ 
+ 		public void actionPerformed(ActionEvent e){ 
+ 			JButton b = (JButton)e.getSource(); 
+ 			if(b.getText().equals("종료")) 
+ 				System.exit(0); 
+ 		} 
+ 	} 
+ 
+ 	class TimeThread extends Thread{
+ 		public void run(){
+ 			for(int i=30; i>=0; i--){
+ 				try {Thread.sleep(1000);}
+ 				catch (InterruptedException e)
+ 				{ e.printStackTrace(); }	
+ 				time=i;
+ 				UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore); 
+ 			}
+ 			System.out.println("시간 초과");
+ 		}
+ 	}
+ 	
+ 	public static void main(String args[]){ 
+ 		new GameMain(); 
+ 	} 
+ }
