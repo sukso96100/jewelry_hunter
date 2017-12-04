@@ -1,10 +1,13 @@
 package game.jewelry.hunter.objects;
+
+import javax.swing.JLabel;
+
 public class Rock extends GameObject{
 	
 	private int durability;
 	
-	public Rock(String name, int x, int y, int durability){
-		super(name, x, y);
+	public Rock(JLabel img, int x, int y, int durability){
+		super(img, x, y);
 		this.durability = durability;
 	}
 	

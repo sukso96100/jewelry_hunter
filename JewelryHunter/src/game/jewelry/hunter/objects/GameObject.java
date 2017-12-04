@@ -1,33 +1,56 @@
 package game.jewelry.hunter.objects;
 
 import java.awt.Color;
-
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class GameObject {
+public class GameObject extends JPanel{
 
-	public String name;
+//	public String name;
+	public JLabel img;
 	public int x, y;
 	protected JLabel objectDisplay;
 	public static final int WIDTH=90, HEIGHT=90;
 	public static final int MOVING_UNIT=100;
 	
-	public GameObject(String name, int x, int y) {
-		this.name=name;
+//	BufferedImage img;
+//	final String imgPath = "C:\\Users\\JiEun\\Desktop\\red.png";
+	
+//	public GameObject(){
+//		try{
+//			img = ImageIO.read(new File(imgPath));
+//		}catch(Exception e){
+//			System.out.println("Exception in Loading Image: "+ e.toString());
+//		}
+		
+//	}
+//	@Override
+//	public void paint(Graphics g){
+//		super.paint(g);
+//		g.drawImage(img, 50, 50, null);
+//	}
+	public GameObject( JLabel img, int x, int y) {
+		this.img=img;
 		this.x=x;
 		this.y=y;
 		
-		this.objectDisplay = new JLabel(this.name);
+		this.objectDisplay = new JLabel();
 		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 		this.objectDisplay.setSize(GameObject.WIDTH,GameObject.HEIGHT); 
 		this.objectDisplay.setForeground(Color.BLUE); 
 	}
 	
-	public String getName() {
-		return name;
+	public JLabel getImage() {
+		return img;
 	}
-	public void setsName(String name) {
-		this.name = name;
+	public void setsName(JLabel img) {
+		this.img = img;
 	}
 	public int getX() {
 		return x;
@@ -55,7 +78,7 @@ public class GameObject {
 	}
 	@Override
 	public String toString() {
-		return "GameObject [name=" + name + ", x=" + x + ", y=" + y + "]";
+		return "GameObject [ x=" + x + ", y=" + y + "]";
 	}
 	
 }

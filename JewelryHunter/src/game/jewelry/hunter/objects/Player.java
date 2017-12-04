@@ -1,9 +1,12 @@
 package game.jewelry.hunter.objects;
+
+import javax.swing.JLabel;
+
 public class Player extends GameObject { 
 	public int totalScore=0;
 	
-	public Player(String name, int x, int y){
-		super(name, x, y);
+	public Player(JLabel img, int x, int y){
+		super(img, x, y);
 	}
 
 	public void move(int x, int y){
