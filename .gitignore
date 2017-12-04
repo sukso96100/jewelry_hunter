@@ -47,3 +47,7 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+.metadata/.log
+.metadata/.plugins/org.eclipse.core.resources/.root/.indexes/properties.index
+.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt
+.metadata/.plugins/org.eclipse.m2e.logback.configuration/0.log
