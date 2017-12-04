@@ -89,7 +89,6 @@ import game.jewelry.hunter.objects.Rock;
  			int x = (int) (Math.random() * 4);
  			int y = (int) (Math.random() * 4);
  			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
- 			GameGround.add(jewelry.getObjectDisplay());
  			// Get Array of objects of the point
  			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
  			boolean hasJewelry = false;
@@ -102,6 +101,7 @@ import game.jewelry.hunter.objects.Rock;
  			}
  			if(!hasJewelry) {
  				objArray.add(jewelry);
+ 				GameGround.add(jewelry.getObjectDisplay());
  			}
  			objectsMap.put(x+","+y, objArray);
  		}
@@ -111,7 +111,6 @@ import game.jewelry.hunter.objects.Rock;
  			int x = (int) (Math.random() * 4);
  			int y = (int) (Math.random() * 4);
  			Rock rock = new Rock("바위"+i,x,y,100);
- 			GameGround.add(rock.getObjectDisplay());
  			// Get Array of objects of the point
  			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
  			boolean hasRock = false;
@@ -124,6 +123,7 @@ import game.jewelry.hunter.objects.Rock;
  			}
  			if(!hasRock) {
  				objArray.add(rock);
+ 				GameGround.add(rock.getObjectDisplay());
  			}
  			objectsMap.put(x+","+y, objArray);
  		}
@@ -175,6 +175,7 @@ import game.jewelry.hunter.objects.Rock;
 	 				if(obj instanceof Rock) {
 	 					((Rock) obj).hit(10);
 	 					if(((Rock) obj).getDurability() <= 0) {
+	 						System.out.println("Removing Rock");
 	 						objArray.remove(obj);
 	 						GameGround.remove(obj.getObjectDisplay());
 	 					}
@@ -185,6 +186,7 @@ import game.jewelry.hunter.objects.Rock;
 				for(GameObject obj : objArray) {
 	 				if(obj instanceof Jewelry) {
 	 					User.increaseScore(((Jewelry)obj).getScore());
+	 					System.out.println("Removing Jewelry");
 	 					objArray.remove(obj);
 	 					GameGround.remove(obj.getObjectDisplay());
 	 					break;
