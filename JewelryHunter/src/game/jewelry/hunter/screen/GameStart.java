@@ -1,4 +1,4 @@
-package jewelry_finder.gamestart;
+package game.jewelry.hunter.screen;
 
 import java.awt.Color;
 
