@@ -101,6 +101,7 @@ import game.jewelry.hunter.objects.Rock;
 
  		// 보석 무작위 위치에 추가.
  		for(int i=0; i<5; i++) {
+<<<<<<< HEAD
  			boolean overLapError = true;
  			while(overLapError){ //overLapError가 생기면 다시
  				int x = (int) (Math.random() * 4);
@@ -168,6 +169,47 @@ import game.jewelry.hunter.objects.Rock;
  							//GameGround.remove(obj.getObjectDisplay());
  							//objectsMap.put(x+","+y, objArray);
  						}
+=======
+ 			int x = (int) (Math.random() * 4);
+ 			int y = (int) (Math.random() * 4);
+ 			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
+ 			// Get Array of objects of the point
+ 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 			boolean hasJewelry = false;
+ 			if(objArray==null) objArray = new ArrayList<GameObject>();
+ 			for(GameObject obj : objArray) {
+ 				if(obj instanceof Jewelry) {
+ 					hasJewelry = true;
+ 					break;
+ 				}
+ 			}
+ 			if(!hasJewelry) {
+ 				objArray.add(jewelry);
+ 				GameGround.add(jewelry.getObjectDisplay());
+ 			}
+ 			objectsMap.put(x+","+y, objArray);
+ 			jewelLeft += 1;
+ 		}
+
+
+ 		for(int i=0; i<5; i++) {
+ 			int x = (int) (Math.random() * 4);
+ 			int y = (int) (Math.random() * 4);
+ 			Rock rock = new Rock("바위"+i,x,y,1);
+ 			// Get Array of objects of the point
+ 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 			boolean hasRock = false;
+ 			if(objArray==null) objArray = new ArrayList<GameObject>();
+ 			for(GameObject obj : objArray) {
+ 				if(obj instanceof Rock) {
+ 					hasRock = true;
+ 					break;
+ 				}
+ 			}
+ 			if(!hasRock) {
+ 				objArray.add(rock);
+ 				GameGround.add(rock.getObjectDisplay());
+>>>>>>> origin/NiceKim
  			}
  		}
 
@@ -201,7 +243,8 @@ import game.jewelry.hunter.objects.Rock;
  						if(obj instanceof Rock) {
  							((Rock) obj).hit(1);
  							if(((Rock) obj).getDurability() <= 0) {
- 								objArray.remove(obj);
+ 								System.out.println("Removing Rock");
+                objArray.remove(obj);
  								GameGround.remove(obj.getObjectDisplay());
  								objectsMap.put(user.x+","+user.y, objArray);
  							}
@@ -213,7 +256,8 @@ import game.jewelry.hunter.objects.Rock;
  						if(obj instanceof Jewelry) {
  							jewelLeft --;
  							score += ((Jewelry)obj).getScore();
- 							objArray.remove(obj);
+ 							System.out.println("Removing Jewelry");
+              objArray.remove(obj);
  							GameGround.remove(obj.getObjectDisplay());
  							objectsMap.put(user.x+","+user.y, objArray);
  							//남은 보석의 갯수가 0일때 뉴 스테이지
