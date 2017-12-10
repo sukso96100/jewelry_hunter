@@ -19,27 +19,22 @@ import game.jewelry.hunter.objects.Rock;
  	public JPanel GameGround; 
  	public JPanel GameMessage; 
  
- 
- 	//오브젝트 객체 변수
+ 	//오브젝트 객체 변수 ->몬스터 추가 예정
  	public User user;
  	public Rock[] rocks; 
  	 
- 	//GUI를 위한 JLabel변수 
- 	
- 	//public JLabel UserLabel; 
+ 	//GUI를 위한 JLabel변수 ->Repaint로 대체할 예정
  	public JLabel UserInfo; 
- 	//public JTextField UserLocation; 
  	public JButton exit; 
  	
  	//Info에 들어 갈 정보들
  	public int time;
  	public int jewelLeft;
  	public int score;
+ 	//public int detector; 보석 감지 정보 저장 예정
  	
  	ArrayList<GameObject> objectsArray = new ArrayList<>();
  	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
- 
- 	
  	
  	GameMain(){ 
  		//Frame 생성 
@@ -57,7 +52,7 @@ import game.jewelry.hunter.objects.Rock;
  		GameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
  		System.out.printf("GameGround: %d, %d, \n", GameGround.getWidth(), GameGround.getHeight()); 
  		 
- 		GameMessage.setBounds(0,GameMap.HEIGHT,GameMap.MAX_WIDTH,80); 
+ 		GameMessage.setBounds(0,GameMap.HEIGHT,GameMap.MAX_WIDTH,200); 
  		System.out.printf("GameMessage: %d, %d, \n", GameMessage.getWidth(), GameMessage.getHeight()); 
  		 
  		GameGround.setBackground(Color.WHITE); 
@@ -72,16 +67,15 @@ import game.jewelry.hunter.objects.Rock;
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
  		GameGround.add(user.getObjectDisplay()); 
 
- 		 
  		//유저위치를 TextBox에 출력 
- 		UserInfo= new JLabel("남은 시간: " + time + " / 유저 위치: (2, 2)" + " / 점수: " + score);  
- 		UserInfo.setLocation(10,20); 
+ 		UserInfo= new JLabel("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);
+ 		UserInfo.setLocation(0,10); 
  		UserInfo.setSize(500,20); 
  		GameMessage.add(UserInfo); 
 
  		//종료버튼
  		exit = new JButton("종료"); 
- 		exit.setLocation(400,15); 
+ 		exit.setLocation(400,5); 
  		exit.setSize(80,30);  
  		GameMessage.add(exit);
  		 
@@ -98,58 +92,87 @@ import game.jewelry.hunter.objects.Rock;
  		setVisible(true); 
  		GameGround.requestFocus(); 
 
- 		//Time 카운트 시작
- 		( new TimeThread() ).start();
+ 		//백그라운드 쓰레드 실행
+ 		( new BackGroundThread() ).start();
 
  	} 
 
  	public void newStage() {
+
  		// 보석 무작위 위치에 추가.
  		for(int i=0; i<5; i++) {
- 			int x = (int) (Math.random() * 4);
- 			int y = (int) (Math.random() * 4);
- 			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
- 			GameGround.add(jewelry.getObjectDisplay());
- 			// Get Array of objects of the point
- 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
- 			boolean hasJewelry = false;
- 			if(objArray==null) objArray = new ArrayList<GameObject>();
- 			for(GameObject obj : objArray) {
- 				if(obj instanceof Jewelry) {
- 					hasJewelry = true;
- 					break;
+ 			boolean overLapError = true;
+ 			while(overLapError){ //overLapError가 생기면 다시
+ 				int x = (int) (Math.random() * 4);
+ 				int y = (int) (Math.random() * 4);
+ 				if( x==2 && y==2 )
+ 					continue;//플레이어 위치에는 보석을 생성할 수 없다
+ 				// Get Array of objects of the point
+ 				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 				boolean hasJewelry = false;
+ 				if(objArray==null) objArray = new ArrayList<GameObject>();
+ 				for(GameObject obj : objArray) {
+ 					if(obj instanceof Jewelry) {
+ 						hasJewelry = true;
+ 						break;
+ 					}
+ 				}
+ 				if(!hasJewelry) {
+ 					int type = (int) (Math.random() * 10);
+ 						Jewelry jewelry;
+ 					if( type == 0)
+ 						jewelry = new Jewelry("플레티넘" ,x, y, 500);
+ 					else if( type < 4)
+ 						jewelry = new Jewelry("골드" ,x, y, 200);
+ 					else if ( type < 7)
+ 						jewelry = new Jewelry("실버" ,x, y, 100);
+ 					else
+ 						jewelry = new Jewelry("브론즈" ,x, y, 10);
+ 					//^보석 타입 결정
+ 					objArray.add(jewelry);
+ 					GameGround.add(jewelry.getObjectDisplay());
+ 					objectsMap.put(x+","+y, objArray);
+ 					jewelLeft ++;
+ 					overLapError = false;
  				}
  			}
- 			if(!hasJewelry) {
- 				objArray.add(jewelry);
- 			}
- 			objectsMap.put(x+","+y, objArray);
- 			jewelLeft += 1;
  		}
 
-
- 		for(int i=0; i<5; i++) {
- 			int x = (int) (Math.random() * 4);
- 			int y = (int) (Math.random() * 4);
- 			Rock rock = new Rock("바위"+i,x,y,1);
- 			GameGround.add(rock.getObjectDisplay());
- 			// Get Array of objects of the point
- 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
- 			boolean hasRock = false;
- 			if(objArray==null) objArray = new ArrayList<GameObject>();
- 			for(GameObject obj : objArray) {
- 				if(obj instanceof Rock) {
- 					hasRock = true;
- 					break;
+ 		for(int x=0; x<5; x++){
+ 			for(int y=0; y<5; y++){
+ 				//중심을 제외한 모든 곳을 바위로 채운다.
+ 				if(x != 2 || y != 2){
+ 					Rock rock = new Rock("바위",x,y,1);
+ 					// Get Array of objects of the point
+ 					ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 					if(objArray==null) objArray = new ArrayList<GameObject>();
+ 					objArray.add(rock);
+ 					GameGround.add(rock.getObjectDisplay());
+ 					objectsMap.put(x+","+y, objArray);
  				}
  			}
- 			if(!hasRock) {
- 				objArray.add(rock);
- 			}
- 			objectsMap.put(x+","+y, objArray);
  		}
+ 		
  	}
- 
+
+ 	public void refreshStage() { 
+ 		//맵을 순회하면서 모든 바위를 삭제함
+ 		for(int x=0; x<5; x++){
+ 			for(int y=0; y<5; y++){
+ 				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+ 				if(objArray!=null)
+ 					for(GameObject obj : objArray)
+ 						if(obj instanceof Rock){ 
+ 							//이 안이 실행되지 않음!
+ 							//objArray.remove(obj);
+ 							//GameGround.remove(obj.getObjectDisplay());
+ 							//objectsMap.put(x+","+y, objArray);
+ 						}
+ 			}
+ 		}
+
+ 	}
+ 	
  	// 키보드 이벤트 처리 
  	class GameKeyListener extends KeyAdapter{ 
  		
@@ -180,6 +203,7 @@ import game.jewelry.hunter.objects.Rock;
  							if(((Rock) obj).getDurability() <= 0) {
  								objArray.remove(obj);
  								GameGround.remove(obj.getObjectDisplay());
+ 								objectsMap.put(user.x+","+user.y, objArray);
  							}
  							user.move(-moveX, -moveY);
  							return;
@@ -191,10 +215,14 @@ import game.jewelry.hunter.objects.Rock;
  							score += ((Jewelry)obj).getScore();
  							objArray.remove(obj);
  							GameGround.remove(obj.getObjectDisplay());
+ 							objectsMap.put(user.x+","+user.y, objArray);
+ 							//남은 보석의 갯수가 0일때 뉴 스테이지
  							if(jewelLeft == 0){
  								System.out.println("뉴 스테이지");
- 								newStage();
- 								time=300;//Jframe 형식이라서 생기지 않음 
+ 								refreshStage(); 
+ 								//newStage();
+ 								//user.x=2; user.y=2;
+ 								//time=300;//Jframe 형식이라서 생기지 않음 
  							}
  							break;
  						}
@@ -217,7 +245,7 @@ import game.jewelry.hunter.objects.Rock;
  		} 
  	} 
 
- 	class TimeThread extends Thread{
+ 	class BackGroundThread extends Thread{
  		public void run(){
  			for(time = 300; time>=0; time--){
  				try {Thread.sleep(200);}
