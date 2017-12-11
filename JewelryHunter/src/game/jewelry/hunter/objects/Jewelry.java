@@ -1,10 +1,12 @@
 package game.jewelry.hunter.objects;
 
+import java.awt.Point;
+
 public class Jewelry extends GameObject {
 	private int score;
 	private boolean isCollected;
-	public Jewelry(String name, int x, int y, int score) {
-		super(name, x, y);
+	public Jewelry(String name, Point location, int score) {
+		super(name, location);
 		// TODO Auto-generated constructor stub
 		this.score = score;
 		this.isCollected = false;
