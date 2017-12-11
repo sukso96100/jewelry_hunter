@@ -2,11 +2,13 @@ package game.jewelry.hunter.objects;
 
 import java.awt.Point;
 
-public class Player extends GameObject { 
+public class User extends GameObject { 
 	public int totalScore=0;
+	public boolean canMove = true;
 	
-	public Player(String name, Point location){
+	public User(String name, Point location){
 		super(name, location);
+
 	}
 
 	public void move(int x, int y){
@@ -18,11 +20,7 @@ public class Player extends GameObject {
 			current.y += y;
 		this.setLocation(current);
 		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
+		canMove=false;
 	}
 
-	
-	public void increaseScore(int score) {
-		this.totalScore += score;
-	}
-	
 }
