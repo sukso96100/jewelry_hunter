@@ -155,22 +155,15 @@ import game.jewelry.hunter.objects.Rock;
  	}
 
  	public void refreshStage() { 
- 		//맵을 순회하면서 모든 바위를 삭제함
- 		for(int x=0; x<GameMap.XSIZE; x++){
- 			for(int y=0; y<GameMap.YSIZE; y++){
- 				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
- 				if(objArray!=null)
- 					for(GameObject obj : objArray)
- 						if(obj instanceof Rock){ 
- 							//이 안이 실행되지 않음!
- 							//objArray.remove(obj);
- 							//GameGround.remove(obj.getObjectDisplay());
- 							//objectsMap.put(x+","+y, objArray);
- 						}
-
- 			}
- 		}
-
+ 		
+ 		GameGround.removeAll();
+ 		GameGround.revalidate();
+ 		GameGround.repaint();
+ 		objectsMap.clear();
+ 		user.x = GameMap.XCENTER;
+ 		user.y = GameMap.YCENTER;
+ 		GameGround.add(user.getObjectDisplay());
+ 		user.objectDisplay.setLocation(user.computeX(), user.computeY()); 
  	}
  	
  	// 키보드 이벤트 처리 
@@ -214,16 +207,14 @@ import game.jewelry.hunter.objects.Rock;
  							jewelLeft --;
  							score += ((Jewelry)obj).getScore();
  							System.out.println("Removing Jewelry");
-              objArray.remove(obj);
+ 							objArray.remove(obj);
  							GameGround.remove(obj.getObjectDisplay());
  							objectsMap.put(user.x+","+user.y, objArray);
  							//남은 보석의 갯수가 0일때 뉴 스테이지
  							if(jewelLeft == 0){
- 								System.out.println("뉴 스테이지");
  								refreshStage(); 
- 								//newStage();
- 								//user.x=2; user.y=2;
- 								//time=300;//Jframe 형식이라서 생기지 않음 
+ 								newStage();
+ 								time += 100; //10초 추가
  							}
  							break;
  						}

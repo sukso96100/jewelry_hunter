@@ -8,7 +8,7 @@ public class GameObject {
 
 	public String name;
 	public int x, y;
-	protected JLabel objectDisplay;
+	public JLabel objectDisplay;
 	public static final int WIDTH=90, HEIGHT=90;
 	public static final int MOVING_UNIT=100;
 	
