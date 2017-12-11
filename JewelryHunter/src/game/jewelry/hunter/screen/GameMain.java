@@ -12,6 +12,7 @@ import java.util.Scanner;
 import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
 import game.jewelry.hunter.objects.Jewelry;
+import game.jewelry.hunter.objects.Monster;
 import game.jewelry.hunter.objects.Player;
 import game.jewelry.hunter.objects.Rock; 
  
@@ -22,6 +23,7 @@ import game.jewelry.hunter.objects.Rock;
  
  	//오브젝트 객체 변수
  	public Player User;
+ 	public Monster monster;
  	public Rock[] Rocks; 
  	 
  	//GUI를 위한 JLabel변수 
@@ -67,8 +69,13 @@ import game.jewelry.hunter.objects.Rock;
  		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
  		 
  		//주인공 객체 생성 
- 		User= new Player("플레이어",2,2); 
- 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", User.name, User.getX(), User.getY()); 
+ 		User= new Player("플레이어", new Point(2,2)); 
+ 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", User.name, User.getLocation().x, User.getLocation().y); 
+ 		
+ 		//  몬스터 객체 생성
+ 		monster = new Monster("Monster", new Point(2,2), 10);
+ 		GameGround.add(monster.getObjectDisplay());
+ 		
  		 
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
  		GameGround.add(User.getObjectDisplay()); 
@@ -88,7 +95,7 @@ import game.jewelry.hunter.objects.Rock;
  		for(int i=0; i<5; i++) {
  			int x = (int) (Math.random() * 4);
  			int y = (int) (Math.random() * 4);
- 			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
+ 			Jewelry jewelry = new Jewelry("보석"+i,new Point(x, y),100);
  			// Get Array of objects of the point
  			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
  			boolean hasJewelry = false;
@@ -106,11 +113,11 @@ import game.jewelry.hunter.objects.Rock;
  			objectsMap.put(x+","+y, objArray);
  		}
  		
-
- 		for(int i=0; i<5; i++) {
+ 	// 바위 무작위 위치에 추가.
+ 		for(int i=0; i<10; i++) {
  			int x = (int) (Math.random() * 4);
  			int y = (int) (Math.random() * 4);
- 			Rock rock = new Rock("바위"+i,x,y,100);
+ 			Rock rock = new Rock("바위"+i,new Point(x, y),100);
  			// Get Array of objects of the point
  			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
  			boolean hasRock = false;
@@ -164,14 +171,14 @@ import game.jewelry.hunter.objects.Rock;
 	 			default: return;  
  			} 
  			User.move(moveX, moveY);
- 			//System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
- 			UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore);  
+ 			//System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getLocation().x), (User.getLocation().y)); 
+ 			UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getLocation().x) +", " + (User.getLocation().y) + ")" + " / 점수: " + User.totalScore);  
 
-			ArrayList<GameObject>objArray = objectsMap.get(User.x+","+User.y);
+			ArrayList<GameObject>objArray = objectsMap.get(User.getLocation().x+","+User.getLocation().y);
 			// 유저 오브젝트 상호 작용 감지 
 			if(objArray!=null) {
+				// 플레이어 위치에 바위가 있는지 확인 
 				for(GameObject obj : objArray) {
-
 	 				if(obj instanceof Rock) {
 	 					((Rock) obj).hit(10);
 	 					if(((Rock) obj).getDurability() <= 0) {
@@ -183,6 +190,7 @@ import game.jewelry.hunter.objects.Rock;
 	 					return;
 	 				}
 	 			}
+				// 플레이어 위치에 보석이 있는지 확인 
 				for(GameObject obj : objArray) {
 	 				if(obj instanceof Jewelry) {
 	 					User.increaseScore(((Jewelry)obj).getScore());
@@ -197,8 +205,8 @@ import game.jewelry.hunter.objects.Rock;
 			//보석 감지 Test
 			boolean detected=false;
 
-			for(int i = User.x-1; i <= User.x+1; i++)
-				for(int j = User.y-1; j <= User.y+1; j++){
+			for(int i = User.getLocation().x-1; i <= User.getLocation().x+1; i++)
+				for(int j = User.getLocation().y-1; j <= User.getLocation().y+1; j++){
 					if(!detected){
 						objArray = objectsMap.get(i+","+j);
 						if(objArray!=null) {
@@ -210,8 +218,8 @@ import game.jewelry.hunter.objects.Rock;
 						}
 					}
 				}
-			for(int i = User.x-2; i <= User.x+2; i++)
-				for(int j = User.y-2; j <= User.y+2; j++){
+			for(int i = User.getLocation().x-2; i <= User.getLocation().x+2; i++)
+				for(int j = User.getLocation().y-2; j <= User.getLocation().y+2; j++){
 					if(!detected){
 						objArray = objectsMap.get(i+","+j);
 						if(objArray!=null) {
@@ -223,7 +231,8 @@ import game.jewelry.hunter.objects.Rock;
 						}
 					}
 				}
-
+			monster.addPath(User.getLocation());
+			monster.move();
  		} 
  	}
 
@@ -242,7 +251,7 @@ import game.jewelry.hunter.objects.Rock;
  				catch (InterruptedException e)
  				{ e.printStackTrace(); }	
  				time=i;
- 				UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getX()) +", " + (User.getY()) + ")" + " / 점수: " + User.totalScore); 
+ 				UserInfo.setText("남은 시간: " + time + " / 유저 위치: (" + (User.getLocation().x) +", " + (User.getLocation().y) + ")" + " / 점수: " + User.totalScore); 
  			}
  			System.out.println("시간 초과");
  		}
