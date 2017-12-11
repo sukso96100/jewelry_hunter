@@ -8,9 +8,9 @@ public class User extends GameObject {
 	}
 
 	public void move(int x, int y){
-		if((super.x + x) >= 0 && (super.x+x) <= 4)
+		if((super.x + x) >= 0 && (super.x+x) <= GameMap.XSIZE-1)
 			super.x += x;
-		if((super.y + y) >= 0 && (super.y+y) <= 4)
+		if((super.y + y) >= 0 && (super.y+y) <= GameMap.YSIZE-1)
 			super.y += y;
 		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 		canMove=false;

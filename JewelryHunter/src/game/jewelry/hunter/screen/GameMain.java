@@ -33,7 +33,6 @@ import game.jewelry.hunter.objects.Rock;
  	public int score;
  	//public int detector; 보석 감지 정보 저장 예정
  	
- 	ArrayList<GameObject> objectsArray = new ArrayList<>();
  	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
  	
  	GameMain(){ 
@@ -61,7 +60,7 @@ import game.jewelry.hunter.objects.Rock;
  		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
  		 
  		//주인공 객체 생성 
- 		user= new User("플레이어",2,2); 
+ 		user= new User("플레이어",GameMap.XCENTER,GameMap.YCENTER); 
  		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getX(), user.getY()); 
  		 
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
@@ -70,7 +69,7 @@ import game.jewelry.hunter.objects.Rock;
  		//유저위치를 TextBox에 출력 
  		UserInfo= new JLabel("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);
  		UserInfo.setLocation(0,10); 
- 		UserInfo.setSize(500,20); 
+ 		UserInfo.setSize(700,20); 
  		GameMessage.add(UserInfo); 
 
  		//종료버튼
@@ -101,12 +100,11 @@ import game.jewelry.hunter.objects.Rock;
 
  		// 보석 무작위 위치에 추가.
  		for(int i=0; i<5; i++) {
-<<<<<<< HEAD
  			boolean overLapError = true;
  			while(overLapError){ //overLapError가 생기면 다시
- 				int x = (int) (Math.random() * 4);
- 				int y = (int) (Math.random() * 4);
- 				if( x==2 && y==2 )
+ 				int x = (int) (Math.random() * GameMap.XSIZE-1);
+ 				int y = (int) (Math.random() * GameMap.YSIZE-1);
+ 				if(GameMap.isCenter(x, y))
  					continue;//플레이어 위치에는 보석을 생성할 수 없다
  				// Get Array of objects of the point
  				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
@@ -139,10 +137,10 @@ import game.jewelry.hunter.objects.Rock;
  			}
  		}
 
- 		for(int x=0; x<5; x++){
- 			for(int y=0; y<5; y++){
+ 		for(int x=0; x<GameMap.XSIZE; x++){
+ 			for(int y=0; y<GameMap.YSIZE; y++){
  				//중심을 제외한 모든 곳을 바위로 채운다.
- 				if(x != 2 || y != 2){
+ 				if(!GameMap.isCenter(x,y)){
  					Rock rock = new Rock("바위",x,y,1);
  					// Get Array of objects of the point
  					ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
@@ -158,8 +156,8 @@ import game.jewelry.hunter.objects.Rock;
 
  	public void refreshStage() { 
  		//맵을 순회하면서 모든 바위를 삭제함
- 		for(int x=0; x<5; x++){
- 			for(int y=0; y<5; y++){
+ 		for(int x=0; x<GameMap.XSIZE; x++){
+ 			for(int y=0; y<GameMap.YSIZE; y++){
  				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
  				if(objArray!=null)
  					for(GameObject obj : objArray)
@@ -169,47 +167,7 @@ import game.jewelry.hunter.objects.Rock;
  							//GameGround.remove(obj.getObjectDisplay());
  							//objectsMap.put(x+","+y, objArray);
  						}
-=======
- 			int x = (int) (Math.random() * 4);
- 			int y = (int) (Math.random() * 4);
- 			Jewelry jewelry = new Jewelry("보석"+i,x,y,100);
- 			// Get Array of objects of the point
- 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
- 			boolean hasJewelry = false;
- 			if(objArray==null) objArray = new ArrayList<GameObject>();
- 			for(GameObject obj : objArray) {
- 				if(obj instanceof Jewelry) {
- 					hasJewelry = true;
- 					break;
- 				}
- 			}
- 			if(!hasJewelry) {
- 				objArray.add(jewelry);
- 				GameGround.add(jewelry.getObjectDisplay());
- 			}
- 			objectsMap.put(x+","+y, objArray);
- 			jewelLeft += 1;
- 		}
 
-
- 		for(int i=0; i<5; i++) {
- 			int x = (int) (Math.random() * 4);
- 			int y = (int) (Math.random() * 4);
- 			Rock rock = new Rock("바위"+i,x,y,1);
- 			// Get Array of objects of the point
- 			ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
- 			boolean hasRock = false;
- 			if(objArray==null) objArray = new ArrayList<GameObject>();
- 			for(GameObject obj : objArray) {
- 				if(obj instanceof Rock) {
- 					hasRock = true;
- 					break;
- 				}
- 			}
- 			if(!hasRock) {
- 				objArray.add(rock);
- 				GameGround.add(rock.getObjectDisplay());
->>>>>>> origin/NiceKim
  			}
  		}
 
@@ -231,7 +189,6 @@ import game.jewelry.hunter.objects.Rock;
  				default: return;  
  				} 
  				user.move(moveX, moveY);
- 				//System.out.printf("%s가 (%d,%d)로 이동했습니다. \n", User.name, (User.getX()), (User.getY())); 
  				UserInfo.setText("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);  
 
  				ArrayList<GameObject>objArray = objectsMap.get(user.x+","+user.y);
@@ -244,7 +201,7 @@ import game.jewelry.hunter.objects.Rock;
  							((Rock) obj).hit(1);
  							if(((Rock) obj).getDurability() <= 0) {
  								System.out.println("Removing Rock");
-                objArray.remove(obj);
+ 								objArray.remove(obj);
  								GameGround.remove(obj.getObjectDisplay());
  								objectsMap.put(user.x+","+user.y, objArray);
  							}
