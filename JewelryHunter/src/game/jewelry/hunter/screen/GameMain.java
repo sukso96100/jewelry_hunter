@@ -12,6 +12,8 @@ import java.util.Scanner;
 import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
 import game.jewelry.hunter.objects.Jewelry;
+import game.jewelry.hunter.objects.Monster;
+
 import game.jewelry.hunter.objects.User;
 import game.jewelry.hunter.objects.Rock; 
  
@@ -19,12 +21,13 @@ import game.jewelry.hunter.objects.Rock;
  	public JPanel GameGround; 
  	public JPanel GameMessage; 
  
- 	//오브젝트 객체 변수 ->몬스터 추가 예정
+ 	//오브젝트 객체 변수
  	public User user;
- 	public Rock[] rocks; 
+ 	public Rock[] rocks;
+  public Monster monster;
  	 
  	//GUI를 위한 JLabel변수 ->Repaint로 대체할 예정
- 	public JLabel UserInfo; 
+ 	public JLabel userInfo; 
  	public JButton exit; 
  	
  	//Info에 들어 갈 정보들
@@ -60,17 +63,21 @@ import game.jewelry.hunter.objects.Rock;
  		setSize(GameMap.MAX_WIDTH,GameMap.MAX_HEIGHT); 
  		 
  		//주인공 객체 생성 
- 		user= new User("플레이어",GameMap.XCENTER,GameMap.YCENTER); 
- 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getX(), user.getY()); 
- 		 
+ 		user= new User("플레이어", GameMap.XCENTER,GameMap.YCENTER); 
+ 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getLocation().x, user.getLocation().y); 
+ 		
+ 		//  몬스터 객체 생성
+ 		monster = new Monster("Monster", new Point(2,2), 10);
+ 		GameGround.add(monster.getObjectDisplay());
+ 		
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
  		GameGround.add(user.getObjectDisplay()); 
 
  		//유저위치를 TextBox에 출력 
- 		UserInfo= new JLabel(updatedInfo());
- 		UserInfo.setLocation(0,10); 
- 		UserInfo.setSize(700,20); 
- 		GameMessage.add(UserInfo); 
+ 		userInfo= new JLabel(updatedInfo());  
+ 		userInfo.setLocation(10,20); 
+ 		userInfo.setSize(700,20); 
+ 		GameMessage.add(userInfo); 
 
  		//종료버튼
  		exit = new JButton("종료"); 
@@ -133,10 +140,11 @@ import game.jewelry.hunter.objects.Rock;
  					objectsMap.put(x+","+y, objArray);
  					jewelLeft ++;
  					overLapError = false;
+
  				}
  			}
  		}
-
+    
  		for(int x=0; x<GameMap.XSIZE; x++){
  			for(int y=0; y<GameMap.YSIZE; y++){
  				//중심을 제외한 모든 곳을 바위로 채운다.
@@ -156,7 +164,6 @@ import game.jewelry.hunter.objects.Rock;
 
  	public String updatedInfo() 
  	{ return "남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft; }
-
 
  	public void refreshStage() { 
  		
@@ -186,10 +193,9 @@ import game.jewelry.hunter.objects.Rock;
  				default: return;  
  				} 
  				user.move(moveX, moveY);
- 				UserInfo.setText(updatedInfo());  
-
- 				ArrayList<GameObject>objArray = objectsMap.get(user.x+","+user.y);
-
+ 				userInfo.setText(updatedInfo());
+        
+        ArrayList<GameObject>objArray = objectsMap.get(user.getLocation().x+","+user.getLocation().y);
  				// 유저 오브젝트 상호 작용 감지 
  				if(objArray!=null) {
  					for(GameObject obj : objArray) {
@@ -262,8 +268,8 @@ import game.jewelry.hunter.objects.Rock;
  	public void detect(ArrayList<GameObject>objArray) {
  		boolean detected=false;
 
- 		for(int i = user.x-1; i <= user.x+1; i++)
- 			for(int j = user.y-1; j <= user.y+1; j++){
+ 		for(int i = user.getLocation().x-1; i <= user.getLocation().x+1; i++)
+ 			for(int j = user.getLocation().y-1; j <= user.getLocation().y+1; j++){
  				if(!detected){
  					objArray = objectsMap.get(i+","+j);
  					if(objArray!=null) {
@@ -275,8 +281,8 @@ import game.jewelry.hunter.objects.Rock;
  					}
  				}
  			}
- 		for(int i = user.x-2; i <= user.x+2; i++)
- 			for(int j = user.y-2; j <= user.y+2; j++){
+ 		for(int i = user.getLocation().x-2; i <= user.getLocation().x+2; i++)
+ 			for(int j = user.getLocation().y-2; j <= user.getLocation().y+2; j++){
  				if(!detected){
  					objArray = objectsMap.get(i+","+j);
  					if(objArray!=null) {
