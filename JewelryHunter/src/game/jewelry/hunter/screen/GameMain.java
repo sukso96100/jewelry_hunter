@@ -67,7 +67,7 @@ import game.jewelry.hunter.objects.Rock;
  		GameGround.add(user.getObjectDisplay()); 
 
  		//유저위치를 TextBox에 출력 
- 		UserInfo= new JLabel("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);
+ 		UserInfo= new JLabel(updatedInfo());
  		UserInfo.setLocation(0,10); 
  		UserInfo.setSize(700,20); 
  		GameMessage.add(UserInfo); 
@@ -151,8 +151,12 @@ import game.jewelry.hunter.objects.Rock;
  				}
  			}
  		}
- 		
+
  	}
+
+ 	public String updatedInfo() 
+ 	{ return "남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft; }
+
 
  	public void refreshStage() { 
  		
@@ -182,7 +186,7 @@ import game.jewelry.hunter.objects.Rock;
  				default: return;  
  				} 
  				user.move(moveX, moveY);
- 				UserInfo.setText("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);  
+ 				UserInfo.setText(updatedInfo());  
 
  				ArrayList<GameObject>objArray = objectsMap.get(user.x+","+user.y);
 
@@ -237,13 +241,15 @@ import game.jewelry.hunter.objects.Rock;
  		} 
  	} 
 
+ 	
+ 	//0.1초마다 한번씩 실행
  	class BackGroundThread extends Thread{
  		public void run(){
  			for(time = 300; time>=0; time--){
- 				try {Thread.sleep(200);}
+ 				try {Thread.sleep(100);}
  				catch (InterruptedException e)
  				{ e.printStackTrace(); }	
- 				UserInfo.setText("남은 시간: " + time/10 + " / 유저 위치: (" + (user.getX()) +", " + (user.getY()) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft);
+ 				UserInfo.setText(updatedInfo());
  				//repaint
  				user.canMove=true;
  				GameGround.requestFocus(); 
