@@ -14,9 +14,9 @@ public class User extends GameObject {
 	public void move(int x, int y){
 		Point current = this.getLocation();
 		Point next = current;
-		if((current.x + x) >= 0 && (current.x+x) <= 4)
+		if((current.x + x) >= 0 && (current.x+x) <= GameMap.XSIZE-1)
 			current.x += x;
-		if((current.y + y) >= 0 && (current.y+y) <= 4)
+		if((current.y + y) >= 0 && (current.y+y) <= GameMap.YSIZE-1)
 			current.y += y;
 		this.setLocation(current);
 		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
