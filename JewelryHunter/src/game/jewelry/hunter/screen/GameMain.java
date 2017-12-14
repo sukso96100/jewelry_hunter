@@ -1,13 +1,12 @@
 package game.jewelry.hunter.screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
- import java.awt.event.*; 
- import java.awt.*; 
- import javax.swing.*;
+import java.awt.event.*; 
+import java.awt.*; 
+import javax.swing.*;
 
 import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
