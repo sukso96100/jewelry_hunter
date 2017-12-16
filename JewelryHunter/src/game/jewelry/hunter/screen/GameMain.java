@@ -56,6 +56,9 @@ public class GameMain extends JFrame {
 	public static String highScoreName;
 	public String detector = "off";
 
+	public int monsterEncount = 0;
+	public int wait = 0;
+	
 	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
 
 	GameMain(){ 
@@ -144,10 +147,6 @@ public class GameMain extends JFrame {
 		//주인공 객체 생성 
 		user= new User("플레이어", new Point(GameMap.XCENTER,GameMap.YCENTER));
 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getLocation().x, user.getLocation().y); 
-
-		//  몬스터 객체 생성
-		monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER), 10);
-		GameGround.add(monster.getObjectDisplay());
 
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
 		GameGround.add(user.getObjectDisplay()); 
@@ -286,13 +285,11 @@ public class GameMain extends JFrame {
 			for(int y=0; y<GameMap.YSIZE; y++){
 				//중심을 제외한 모든 곳을 바위로 채운다.
 				if(!GameMap.isCenter(x,y)){
-					//바위는 세 종류
+					//바위는 두 종류
 					int type = (int) (Math.random() * 10);
 					Rock rock;
-					if(type == 0)
-						rock = new Rock("바위3",new Point(x,y),5);
-					else if( type < 3 )
-						rock = new Rock("바위2",new Point(x,y),2);
+					if( type < 3 )
+						rock = new Rock("바위2",new Point(x,y),3);
 					else
 						rock = new Rock("바위",new Point(x,y),1);
 					// Get Array of objects of the point
@@ -314,12 +311,13 @@ public class GameMain extends JFrame {
 		s.append("<br> 점수: " + score);
 		s.append("<br> 남은 보석: " + jewelLeft);
 		s.append("<br> 보석감지: " + detector);
+		s.append("<br> 남은 목숨: " + user.life);
 		s.append("<br> 최고기록: '" + highScoreName +"'/ " + highScore + "</html>");
 		return s.toString();
 	}
 	
 	public void refreshStage() { 
-
+		
 		GameGround.removeAll();
 		GameGround.revalidate();
 		GameGround.repaint();
@@ -375,11 +373,20 @@ public class GameMain extends JFrame {
 							if(jewelLeft == 0){
 								refreshStage(); 
 								newStage();
+								monsterEncount = 0;
 								time += 100; score += 500; //클리어시 시간과 점수 추가
 							}
 							break;
 						}
 					}
+					if(monsterEncount>50)
+						if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
+							user.life --;
+							GameGround.remove(monster.getObjectDisplay());
+							monsterEncount = 0;
+							user.canMove = false;
+							wait = 1; //wait 변수 실행
+						}
 				}
 
 				//보석 감지 
@@ -406,12 +413,39 @@ public class GameMain extends JFrame {
 	class BackGroundThread extends Thread{
 		public void run(){
 			for(time = 300; time>=0; time--){
+				if(user.life <= 0)
+					break;
 				try {Thread.sleep(100);}
 				catch (InterruptedException e)
 				{ e.printStackTrace(); }	
 				userInfo.setText(updatedInfo());
 				//repaint
-				user.canMove=true;
+
+				if(monsterEncount<50) //10초 후 몬스터 등장
+					monsterEncount ++;
+				else if(monsterEncount == 50) { //몬스터 객체 생성
+					//  몬스터 객체 생성
+					monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER));
+					GameGround.add(monster.getObjectDisplay());
+					monsterEncount ++;
+				}
+				else {
+					monster.move(user);
+					if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
+						user.life --;
+						GameGround.remove(monster.getObjectDisplay());
+						monsterEncount = 0;
+						user.canMove = false;
+						wait = 1; //wait 변수 실행
+					}
+				}
+				//wait 변수가 실행되면 3초동안 움직일 수 없다.
+				if(wait > 0){
+					wait ++;
+					if (wait > 30)
+						wait = 0;
+				} else
+					user.canMove = true;
 				GameGround.requestFocus(); 
 			}
 			user.canMove=false;
