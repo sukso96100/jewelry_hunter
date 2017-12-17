@@ -27,7 +27,7 @@ import game.jewelry.hunter.objects.Rock;
 
 public class GameMain extends JFrame { 
 	//UI
-	private URL btnImgURL = getClass().getResource("img/PixelArt.png");
+	private URL btnImgURL = getClass().getResource("res/PixelArt.png");
 	private JLayeredPane layeredPane;
 	private JLayeredPane gameMain;
 	private JButton start;
@@ -36,7 +36,7 @@ public class GameMain extends JFrame {
 	private ExplainDialog explainDialog; 
 	private boolean change = false;
 
-	public static JPanel GameGround; 
+	public static GameGround gameGround; 
 	public JPanel GameMessage; 
 
 	//오브젝트 객체 변수
@@ -59,7 +59,7 @@ public class GameMain extends JFrame {
 	public int monsterEncount = 0;
 	public int wait = 0;
 	
-	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
+	Map<Point, ArrayList<GameObject>> objectsMap = new HashMap();
 
 	GameMain(){ 
 		//Frame 생성 
@@ -77,7 +77,7 @@ public class GameMain extends JFrame {
 		JPanel intro = null;
 
 		try {
-			intro = new IntroPanel("img/lava-anim-dribbble.png");
+			intro = new IntroPanel("res/lava-anim-dribbble.png");
 			explainDialog = new ExplainDialog(this, "Explain");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,17 +86,17 @@ public class GameMain extends JFrame {
 		this.add(intro);
 		intro.setBounds(0, 0, 1000, 700);
 
-		start = new JButton(new ImageIcon("img/PixelArt.png"));
+		start = new JButton(new ImageIcon("res/PixelArt.png"));
 		start.setBounds(400, 330, 200, 78);
 		layeredPane.add(start);
 
-		explan = new JButton(new ImageIcon("img/PixelArt.png"));
+		explan = new JButton(new ImageIcon("res/PixelArt.png"));
 		explan.setBounds(400, 430, 200, 78);
 		layeredPane.add(explan);
 
 		explainDialog.setLocationRelativeTo(this);
 
-		introExit = new JButton(new ImageIcon("img/PixelArt.png"));
+		introExit = new JButton(new ImageIcon("res/PixelArt.png"));
 		introExit.setBounds(400, 530, 200, 78);
 		layeredPane.add(introExit);
 
@@ -105,7 +105,7 @@ public class GameMain extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				change = true;
 				getContentPane().removeAll();
-				getContentPane().add(GameGround);
+				getContentPane().add(gameGround);
 				getContentPane().add(GameMessage);
 				revalidate();
 				repaint();
@@ -128,28 +128,25 @@ public class GameMain extends JFrame {
 		add(layeredPane);
 		setVisible(true);
 
-		GameGround = new JPanel(); 
+		//주인공 객체 생성 
+				user= new User("플레이어", new Point(GameMap.XCENTER,GameMap.YCENTER));
+				System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getLocation().x, user.getLocation().y); 
+				monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER));
+		gameGround = new GameGround(objectsMap, user, monster); 
 		GameMessage = new JPanel(); 
-		GameGround.setLayout(null); 
+		gameGround.setLayout(null); 
 		GameMessage.setLayout(null); 
 
 
-		GameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
-		System.out.printf("GameGround: %d, %d, \n", GameGround.getWidth(), GameGround.getHeight()); 
+		gameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
+		System.out.printf("gameGround: %d, %d, \n", gameGround.getWidth(), gameGround.getHeight()); 
 
 		GameMessage.setBounds(GameMap.WIDTH,0,300,GameMap.HEIGHT); 
 		System.out.printf("GameMessage: %d, %d, \n", GameMessage.getWidth(), GameMessage.getHeight()); 
 
-		GameGround.setBackground(Color.WHITE); 
+		gameGround.setBackground(Color.WHITE); 
 		GameMessage.setBackground(Color.GRAY); 
 
-
-		//주인공 객체 생성 
-		user= new User("플레이어", new Point(GameMap.XCENTER,GameMap.YCENTER));
-		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getLocation().x, user.getLocation().y); 
-
-		//주인공 JLabel 객체 생성 및 Frame에 Add 
-		GameGround.add(user.getObjectDisplay()); 
 
 		//유저위치를 TextBox에 출력 
 		userInfo= new JLabel(updatedInfo());  
@@ -163,18 +160,18 @@ public class GameMain extends JFrame {
 		exit.setSize(80,30);  
 		GameMessage.add(exit);
 
-		GameGround.addKeyListener(new GameKeyListener());	 
+		gameGround.addKeyListener(new GameKeyListener());	 
 		exit.addActionListener(new GameActionListener()); 
 
 		add(GameMessage); 
-		add(GameGround); 
+		add(gameGround); 
 
 		//스테이지 오브젝트 생성
 		newStage();
 
 		setResizable(false); 
 		setVisible(true); 
-		GameGround.requestFocus(); 
+		gameGround.requestFocus(); 
 
 		
 	} 
@@ -190,55 +187,6 @@ public class GameMain extends JFrame {
 		}
 	}
 
-
-	class IntroPanel extends JPanel {
-		private Image background;
-
-		public IntroPanel(String fileName) throws IOException {
-			background = ImageIO.read(new File(fileName));
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
-	class ExplainDialog extends JDialog {
-		private Image background;
-		private JButton okBtn;
-		private JLabel explainImg;
-
-
-		public ExplainDialog (JFrame frame, String title) throws IOException {
-			super(frame, title);
-
-			setLayout(null);
-			explainImg = new JLabel((new ImageIcon("img/tmp_explain.png")));
-			explainImg.setBounds(0, 0, 500, 500);
-			add(explainImg);
-			okBtn = new JButton("OK");
-			okBtn.setBounds(220, 400, 60, 30);
-			add(okBtn);
-			setSize(500, 500);
-
-			okBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setVisible(false);
-				}
-			});
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponents(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
 	public void newStage() {
 
 		// 보석 무작위 위치에 추가.
@@ -250,7 +198,7 @@ public class GameMain extends JFrame {
 				if(GameMap.isCenter(x, y))
 					continue;//플레이어 위치에는 보석을 생성할 수 없다
 				// Get Array of objects of the point
-				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+				ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 				boolean hasJewelry = false;
 				if(objArray==null) objArray = new ArrayList<GameObject>();
 				for(GameObject obj : objArray) {
@@ -261,19 +209,8 @@ public class GameMain extends JFrame {
 				}
 				if(!hasJewelry) {
 					int type = (int) (Math.random() * 10);
-					Jewelry jewelry;
-					if( type == 0)
-						jewelry = new Jewelry("플레티넘" ,new Point(x, y), 500);
-					else if( type < 4)
-						jewelry = new Jewelry("골드" ,new Point(x, y), 200);
-					else if ( type < 7)
-						jewelry = new Jewelry("실버" ,new Point(x, y), 100);
-					else
-						jewelry = new Jewelry("브론즈" ,new Point(x, y), 10);
-					//^보석 타입 결정
-					objArray.add(jewelry);
-					GameGround.add(jewelry.getObjectDisplay());
-					objectsMap.put(x+","+y, objArray);
+					objArray.add(new Jewelry(new Point(x, y)));
+					objectsMap.put(new Point(x,y), objArray);
 					jewelLeft ++;
 					overLapError = false;
 
@@ -293,14 +230,15 @@ public class GameMain extends JFrame {
 					else
 						rock = new Rock("바위",new Point(x,y),1);
 					// Get Array of objects of the point
-					ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+					ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 					if(objArray==null) objArray = new ArrayList<GameObject>();
 					objArray.add(rock);
-					GameGround.add(rock.getObjectDisplay());
-					objectsMap.put(x+","+y, objArray);
+					objectsMap.put(new Point(x,y), objArray);
 				}
 			}
 		}
+		
+		gameGround.repaint();
 
 	}
 
@@ -317,15 +255,10 @@ public class GameMain extends JFrame {
 	}
 	
 	public void refreshStage() { 
-		
-		GameGround.removeAll();
-		GameGround.revalidate();
-		GameGround.repaint();
+		gameGround.repaint();
 		objectsMap.clear();
 		user.getLocation().x = GameMap.XCENTER;
 		user.getLocation().y = GameMap.YCENTER;
-		GameGround.add(user.getObjectDisplay());
-		user.getObjectDisplay().setLocation(user.computeX(), user.computeY()); 
 	}
 
 	// 키보드 이벤트 처리 
@@ -346,7 +279,7 @@ public class GameMain extends JFrame {
 				user.move(moveX, moveY);
 				userInfo.setText(updatedInfo());
 
-				ArrayList<GameObject>objArray = objectsMap.get(user.getLocation().x+","+user.getLocation().y);
+				ArrayList<GameObject>objArray = objectsMap.get(user.getLocation());
 				// 유저 오브젝트 상호 작용 감지 
 				if(objArray!=null) {
 					for(GameObject obj : objArray) {
@@ -355,8 +288,7 @@ public class GameMain extends JFrame {
 							((Rock) obj).hit(1);
 							if(((Rock) obj).getDurability() <= 0) {
 								objArray.remove(obj);
-								GameGround.remove(obj.getObjectDisplay());
-								objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
+								objectsMap.put(user.getLocation(), objArray);
 							}
 							user.move(-moveX, -moveY);
 							return;
@@ -367,8 +299,7 @@ public class GameMain extends JFrame {
 							jewelLeft --;
 							score += ((Jewelry)obj).getScore();
 							objArray.remove(obj);
-							GameGround.remove(obj.getObjectDisplay());
-							objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
+							objectsMap.put(user.getLocation(), objArray);
 							//남은 보석의 갯수가 0일때 뉴 스테이지
 							if(jewelLeft == 0){
 								refreshStage(); 
@@ -382,7 +313,6 @@ public class GameMain extends JFrame {
 					if(monsterEncount>50)
 						if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
 							user.life --;
-							GameGround.remove(monster.getObjectDisplay());
 							monsterEncount = 0;
 							user.canMove = false;
 							wait = 1; //wait 변수 실행
@@ -392,7 +322,7 @@ public class GameMain extends JFrame {
 				//보석 감지 
 				detect(objArray);
 			} 
-
+			gameGround.repaint();
 		}
 	}
 
@@ -425,15 +355,14 @@ public class GameMain extends JFrame {
 					monsterEncount ++;
 				else if(monsterEncount == 50) { //몬스터 객체 생성
 					//  몬스터 객체 생성
-					monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER));
-					GameGround.add(monster.getObjectDisplay());
+					monster.makeMovable();
 					monsterEncount ++;
 				}
 				else {
 					monster.move(user);
-					if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
+					gameGround.repaint();
+					if(user.getLocation().equals(monster.getLocation())){	
 						user.life --;
-						GameGround.remove(monster.getObjectDisplay());
 						monsterEncount = 0;
 						user.canMove = false;
 						wait = 1; //wait 변수 실행
@@ -446,7 +375,7 @@ public class GameMain extends JFrame {
 						wait = 0;
 				} else
 					user.canMove = true;
-				GameGround.requestFocus(); 
+				gameGround.requestFocus(); 
 			}
 			user.canMove=false;
 			saveHighScore();
@@ -460,7 +389,7 @@ public class GameMain extends JFrame {
 		for(int i = user.getLocation().x-1; i <= user.getLocation().x+1; i++)
 			for(int j = user.getLocation().y-1; j <= user.getLocation().y+1; j++){
 				if(!detected){
-					objArray = objectsMap.get(i+","+j);
+					objArray = objectsMap.get(new Point(i,j));
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
@@ -473,7 +402,7 @@ public class GameMain extends JFrame {
 		for(int i = user.getLocation().x-2; i <= user.getLocation().x+2; i++)
 			for(int j = user.getLocation().y-2; j <= user.getLocation().y+2; j++){
 				if(!detected){
-					objArray = objectsMap.get(i+","+j);
+					objArray = objectsMap.get(new Point(i,j));
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
@@ -502,7 +431,7 @@ public class GameMain extends JFrame {
 				out.close(); out2.close();
 
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(GameGround,"최고점수 파일 로딩에 실패했습니다.");
+				JOptionPane.showMessageDialog(gameGround,"최고점수 파일 로딩에 실패했습니다.");
 			}
 		}
 		else {
@@ -521,7 +450,7 @@ public class GameMain extends JFrame {
 				highScore = Integer.parseInt(value[1]);
 			}
 			catch (Exception e){
-				JOptionPane.showMessageDialog(GameGround, "최고 점수 저장에 실패했습니다.");
+				JOptionPane.showMessageDialog(gameGround, "최고 점수 저장에 실패했습니다.");
 			}
 
 		}
@@ -559,7 +488,7 @@ public class GameMain extends JFrame {
 							out.close(); out2.close();
 							scoreFrame.setVisible(false);
 						} catch (Exception error){
-							JOptionPane.showMessageDialog(GameGround, "최고 점수 저장에 실패했습니다.");
+							JOptionPane.showMessageDialog(gameGround, "최고 점수 저장에 실패했습니다.");
 						}
 					}
 				});
@@ -571,7 +500,7 @@ public class GameMain extends JFrame {
 
 			}
 			else{
-				JOptionPane.showMessageDialog(GameGround, "최고 기록 갱신 실패, 다시 도전하세요!");
+				JOptionPane.showMessageDialog(gameGround, "최고 기록 갱신 실패, 다시 도전하세요!");
 			} 
 		} 
 	}
