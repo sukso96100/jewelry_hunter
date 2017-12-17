@@ -187,55 +187,6 @@ public class GameMain extends JFrame {
 		}
 	}
 
-
-	class IntroPanel extends JPanel {
-		private Image background;
-
-		public IntroPanel(String fileName) throws IOException {
-			background = ImageIO.read(new File(fileName));
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
-	class ExplainDialog extends JDialog {
-		private Image background;
-		private JButton okBtn;
-		private JLabel explainImg;
-
-
-		public ExplainDialog (JFrame frame, String title) throws IOException {
-			super(frame, title);
-
-			setLayout(null);
-			explainImg = new JLabel((new ImageIcon("res/tmp_explain.png")));
-			explainImg.setBounds(0, 0, 500, 500);
-			add(explainImg);
-			okBtn = new JButton("OK");
-			okBtn.setBounds(220, 400, 60, 30);
-			add(okBtn);
-			setSize(500, 500);
-
-			okBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setVisible(false);
-				}
-			});
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponents(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
 	public void newStage() {
 
 		// 보석 무작위 위치에 추가.
@@ -409,7 +360,8 @@ public class GameMain extends JFrame {
 				}
 				else {
 					monster.move(user);
-					if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
+					gameGround.repaint();
+					if(user.getLocation().equals(monster.getLocation())){	
 						user.life --;
 						monsterEncount = 0;
 						user.canMove = false;
