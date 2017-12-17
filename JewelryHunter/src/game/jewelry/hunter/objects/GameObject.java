@@ -53,8 +53,8 @@ public class GameObject {
 	public JLabel getObjectDisplay() {
 		return this.objectDisplay;
 	}
-	@Override
 	
+	@Override
 	public String toString() {
 		return "GameObject [name=" + name + ", x=" + this.location.x + ", y=" + this.location.y + "]";
 	}
