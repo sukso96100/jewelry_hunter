@@ -24,7 +24,7 @@ public class GameGround extends JPanel{
 	Monster monster;
 	
 	Image diamondb;
-//	Image diamonds[];
+	Image diamonds[];
 	Image rock;
 	Image userImg;
 	Image monsterImg;
@@ -34,9 +34,12 @@ public class GameGround extends JPanel{
 		this.objMap = objMap;
 		this.user = user;
 		this.monster = monster;
+		this.diamonds = new Image[4];
 		try {
-			this.diamondb = ImageIO.read(new FileInputStream("res/diamondb.png"));
-
+			this.diamonds[0] = ImageIO.read(new FileInputStream("res/diamondb.png"));
+			this.diamonds[1] = ImageIO.read(new FileInputStream("res/diamondg.png"));
+			this.diamonds[2] = ImageIO.read(new FileInputStream("res/diamondr.png"));
+			this.diamonds[3] = ImageIO.read(new FileInputStream("res/diamondy.png"));
 			this.rock = ImageIO.read(new FileInputStream("res/background.png"));
 			this.userImg = ImageIO.read(new FileInputStream("res/pickax.png"));
 			this.monsterImg = ImageIO.read(new FileInputStream("res/lava-anim-dribbble.png"));
@@ -58,18 +61,17 @@ public class GameGround extends JPanel{
 			}
 			for(GameObject obj : objs) {
 				if(obj instanceof Jewelry) {
-					g2d.drawImage(diamondb, obj.computeX(), obj.computeY(),
+					g2d.drawImage(diamonds[((Jewelry) obj).getType()], obj.computeX(), obj.computeY(),
 							GameObject.WIDTH, GameObject.HEIGHT, null);
 				}
 			}
 		}
-		
+		if(this.monster.isMovable()) {
+			g2d.drawImage(monsterImg, this.monster.computeX(), this.monster.computeY(), GameObject.WIDTH, GameObject.HEIGHT, null);
+
+		}
 		g2d.drawImage(userImg, this.user.computeX(), this.user.computeY(), GameObject.WIDTH, GameObject.HEIGHT, null);
-		g2d.drawImage(monsterImg, this.monster.computeX(), this.monster.computeY(), GameObject.WIDTH, GameObject.HEIGHT, null);
-	}
-	
-	private void drawJewelry() {
-		
+
 	}
 	
 

@@ -6,10 +6,12 @@ public class Monster extends GameObject {
 	
 	
 	private int moveCount;
+	private boolean movable;
 
 	public Monster(String name, Point location) {
 		super(name, location);
 		moveCount = 0;
+		this.movable = false;
 	}
 	
 	public void move(User user) {
@@ -29,10 +31,17 @@ public class Monster extends GameObject {
 			next.y ++;
 
 		this.setLocation(next);
-		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 		
 		}
 
+	}
+	
+	public boolean isMovable() {
+		return this.movable;
+	}
+	
+	public void makeMovable() {
+		this.movable = true;
 	}
 
 }
