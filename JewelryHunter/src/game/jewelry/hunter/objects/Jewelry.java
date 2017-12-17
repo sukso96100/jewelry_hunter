@@ -8,11 +8,29 @@ public class Jewelry extends GameObject {
 	private boolean isCollected;
 	private int type;
 
-	public Jewelry(String name, Point location, int score, int type) {
-		super(name, location);
+	public Jewelry(Point location) {
+		super("", location);
 		// TODO Auto-generated constructor stub
-		this.score = score;
 		this.isCollected = false;
+		this.type = (int) (Math.random() * 3);
+		switch(this.type) {
+		case 0 : 
+			this.score = 10;
+			this.name = "Bronze";
+			break;
+		case 1 :
+			this.score = 100;
+			this.name = "Silver";
+			break;
+		case 2 :
+			this.score = 200;
+			this.name = "Gold";
+			break;
+		case 3 :
+			this.score = 500;
+			this.name = "Platinum";
+			break;
+		}
 	}
 	
 	public int getScore() {

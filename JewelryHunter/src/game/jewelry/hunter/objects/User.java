@@ -21,7 +21,6 @@ public class User extends GameObject {
 		if((current.y + y) >= 0 && (current.y+y) <= GameMap.YSIZE-1)
 			current.y += y;
 		this.setLocation(current);
-		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
 		canMove=false;
 	}
 

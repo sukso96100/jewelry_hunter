@@ -258,17 +258,7 @@ public class GameMain extends JFrame {
 				}
 				if(!hasJewelry) {
 					int type = (int) (Math.random() * 10);
-					Jewelry jewelry;
-					if( type == 0)
-						jewelry = new Jewelry("플레티넘" ,new Point(x, y), 500, 0);
-					else if( type < 4)
-						jewelry = new Jewelry("골드" ,new Point(x, y), 200, 1);
-					else if ( type < 7)
-						jewelry = new Jewelry("실버" ,new Point(x, y), 100, 2);
-					else
-						jewelry = new Jewelry("브론즈" ,new Point(x, y), 10, 3);
-					//^보석 타입 결정
-					objArray.add(jewelry);
+					objArray.add(new Jewelry(new Point(x, y)));
 					objectsMap.put(new Point(x,y), objArray);
 					jewelLeft ++;
 					overLapError = false;
@@ -314,14 +304,10 @@ public class GameMain extends JFrame {
 	}
 	
 	public void refreshStage() { 
-		
-		gameGround.removeAll();
-		gameGround.revalidate();
 		gameGround.repaint();
 		objectsMap.clear();
 		user.getLocation().x = GameMap.XCENTER;
 		user.getLocation().y = GameMap.YCENTER;
-		user.getObjectDisplay().setLocation(user.computeX(), user.computeY()); 
 	}
 
 	// 키보드 이벤트 처리 
@@ -351,7 +337,6 @@ public class GameMain extends JFrame {
 							((Rock) obj).hit(1);
 							if(((Rock) obj).getDurability() <= 0) {
 								objArray.remove(obj);
-								gameGround.remove(obj.getObjectDisplay());
 								objectsMap.put(user.getLocation(), objArray);
 							}
 							user.move(-moveX, -moveY);
@@ -363,7 +348,6 @@ public class GameMain extends JFrame {
 							jewelLeft --;
 							score += ((Jewelry)obj).getScore();
 							objArray.remove(obj);
-							gameGround.remove(obj.getObjectDisplay());
 							objectsMap.put(user.getLocation(), objArray);
 							//남은 보석의 갯수가 0일때 뉴 스테이지
 							if(jewelLeft == 0){
@@ -378,7 +362,6 @@ public class GameMain extends JFrame {
 					if(monsterEncount>50)
 						if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
 							user.life --;
-							gameGround.remove(monster.getObjectDisplay());
 							monsterEncount = 0;
 							user.canMove = false;
 							wait = 1; //wait 변수 실행
@@ -421,14 +404,13 @@ public class GameMain extends JFrame {
 					monsterEncount ++;
 				else if(monsterEncount == 50) { //몬스터 객체 생성
 					//  몬스터 객체 생성
-					monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER));
+					monster.makeMovable();
 					monsterEncount ++;
 				}
 				else {
 					monster.move(user);
 					if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
 						user.life --;
-						gameGround.remove(monster.getObjectDisplay());
 						monsterEncount = 0;
 						user.canMove = false;
 						wait = 1; //wait 변수 실행
