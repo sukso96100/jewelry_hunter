@@ -6,8 +6,9 @@ public class Jewelry extends GameObject {
 	
 	private int score;
 	private boolean isCollected;
+	private int type;
 
-	public Jewelry(String name, Point location, int score) {
+	public Jewelry(String name, Point location, int score, int type) {
 		super(name, location);
 		// TODO Auto-generated constructor stub
 		this.score = score;
@@ -26,5 +27,8 @@ public class Jewelry extends GameObject {
 		this.isCollected = true;
 	}
 	
+	public int getType() {
+		return this.type;
+	}
 	
 }
