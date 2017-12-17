@@ -1,13 +1,16 @@
 package game.jewelry.hunter.screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
+
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.net.URL;
 import java.awt.*;
 
@@ -31,9 +34,10 @@ public class GameMain extends JFrame {
 	private JButton explan;
 	private JButton introExit;
 	private ExplainDialog explainDialog; 
-	private boolean change = false;
+	private TimeOver timeOver;
+	private JLabel title;
 
-	public JPanel GameGround; 
+	public static JPanel GameGround; 
 	public JPanel GameMessage; 
 
 	//오브젝트 객체 변수
@@ -49,13 +53,14 @@ public class GameMain extends JFrame {
 	public int time;
 	public int jewelLeft;
 	public int score;
-	//public int detector; 보석 감지 정보 저장 예정
+	public static int highScore;
+	public static String highScoreName;
+	public String detector = "off";
 
 	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
 
 	GameMain(){ 
 		//Frame 생성 
-		Scanner s = new Scanner(System.in);
 		setTitle(GameMap.strGameTitle); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		setLayout(null); 
@@ -71,40 +76,44 @@ public class GameMain extends JFrame {
 
 		try {
 			intro = new IntroPanel("img/lava-anim-dribbble.png");
+			title = new JLabel((new ImageIcon("img/Untitled-1.png")));
 			explainDialog = new ExplainDialog(this, "Explain");
+			timeOver = new TimeOver(this, "Time Over");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		this.add(intro);
 		intro.setBounds(0, 0, 1000, 700);
+		
+		title.setBounds(0, 0, 1000, 400);
+		add(title);
 
-		start = new JButton(new ImageIcon("img/PixelArt.png"));
-		start.setBounds(400, 330, 200, 78);
+		start = new JButton(new ImageIcon("img/start.png"));
+		start.setBounds(180, 430, 200, 78);
 		layeredPane.add(start);
 
-		explan = new JButton(new ImageIcon("img/PixelArt.png"));
+		explan = new JButton(new ImageIcon("img/explanation button.png"));
 		explan.setBounds(400, 430, 200, 78);
 		layeredPane.add(explan);
 
 		explainDialog.setLocationRelativeTo(this);
-
-		introExit = new JButton(new ImageIcon("img/PixelArt.png"));
-		introExit.setBounds(400, 530, 200, 78);
+		timeOver.setLocationRelativeTo(this);
+		
+		introExit = new JButton(new ImageIcon("img/end button.png"));
+		introExit.setBounds(620, 430, 200, 78);
 		layeredPane.add(introExit);
 
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				change = true;
 				getContentPane().removeAll();
 				getContentPane().add(GameGround);
 				getContentPane().add(GameMessage);
 				revalidate();
 				repaint();
-				//Start Timer
-				//백그라운드 쓰레드 실행
+				
+				//백그라운드 쓰레드 실행 Start Timer
 				( new BackGroundThread() ).start();
 
 			}
@@ -143,7 +152,7 @@ public class GameMain extends JFrame {
 		System.out.printf("%s의 초기 위치는 (%d, %d) 입니다. \n", user.name, user.getLocation().x, user.getLocation().y); 
 
 		//  몬스터 객체 생성
-		monster = new Monster("Monster", new Point(2,2), 10);
+		monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER), 10);
 		GameGround.add(monster.getObjectDisplay());
 
 		//주인공 JLabel 객체 생성 및 Frame에 Add 
@@ -152,7 +161,7 @@ public class GameMain extends JFrame {
 		//유저위치를 TextBox에 출력 
 		userInfo= new JLabel(updatedInfo());  
 		userInfo.setLocation(10,20); 
-		userInfo.setSize(700,20); 
+		userInfo.setSize(200,200);
 		GameMessage.add(userInfo); 
 
 		//종료버튼
@@ -203,6 +212,42 @@ public class GameMain extends JFrame {
 
 		}
 	}
+	
+	class TimeOver extends JDialog {
+		private Image background;
+		private JButton exitB;
+		private JLabel timeOverImg;
+		
+		public TimeOver (JFrame frame, String title) throws IOException {
+			super(frame, title);
+			
+			setLayout(null);
+			timeOverImg = new JLabel((new ImageIcon("img/tmp_explain.png")));
+			timeOverImg.setBounds(0, 0, 500, 500);
+			add(timeOverImg);
+			exitB = new JButton("Exit");
+			exitB.setBounds(220, 400, 60, 30);
+			add(exitB);
+			setSize(500, 500);
+
+			exitB.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
+							JOptionPane.YES_NO_OPTION);
+					if (exit == JOptionPane.YES_OPTION) {
+						JOptionPane.showMessageDialog(null, "Goodbye");
+						System.exit(0);
+					}
+				}
+			});
+		}
+		public void paintComponent(Graphics g) {
+			super.paintComponents(g);
+
+			g.drawImage(background, 0, 0, null);
+
+		}
+	}
 
 	class ExplainDialog extends JDialog {
 		private Image background;
@@ -214,7 +259,7 @@ public class GameMain extends JFrame {
 			super(frame, title);
 
 			setLayout(null);
-			explainImg = new JLabel((new ImageIcon("img/tmp_explain.png")));
+			explainImg = new JLabel((new ImageIcon("img/설명.png")));
 			explainImg.setBounds(0, 0, 500, 500);
 			add(explainImg);
 			okBtn = new JButton("OK");
@@ -283,7 +328,15 @@ public class GameMain extends JFrame {
 			for(int y=0; y<GameMap.YSIZE; y++){
 				//중심을 제외한 모든 곳을 바위로 채운다.
 				if(!GameMap.isCenter(x,y)){
-					Rock rock = new Rock("바위",new Point(x,y),1);
+					//바위는 세 종류
+					int type = (int) (Math.random() * 10);
+					Rock rock;
+					if(type == 0)
+						rock = new Rock("바위3",new Point(x,y),5);
+					else if( type < 3 )
+						rock = new Rock("바위2",new Point(x,y),2);
+					else
+						rock = new Rock("바위",new Point(x,y),1);
 					// Get Array of objects of the point
 					ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
 					if(objArray==null) objArray = new ArrayList<GameObject>();
@@ -296,9 +349,17 @@ public class GameMain extends JFrame {
 
 	}
 
-	public String updatedInfo() 
-	{ return "남은 시간: " + time/10 + " / 유저 위치: (" + (user.getLocation().x) +", " + (user.getLocation().y) + ")" + " / 점수: " + score + "/ 남은 보석: " + jewelLeft; }
-
+	public String updatedInfo() { 
+		StringBuilder s = new StringBuilder();
+		s.append("<html>남은 시간: " + time/10);
+		s.append("<br>유저 위치: (" + (user.getLocation().x) +", " + (user.getLocation().y) + ")");
+		s.append("<br> 점수: " + score);
+		s.append("<br> 남은 보석: " + jewelLeft);
+		s.append("<br> 보석감지: " + detector);
+		s.append("<br> 최고기록: '" + highScoreName +"'/ " + highScore + "</html>");
+		return s.toString();
+	}
+	
 	public void refreshStage() { 
 
 		GameGround.removeAll();
@@ -337,7 +398,6 @@ public class GameMain extends JFrame {
 						if(obj instanceof Rock) {
 							((Rock) obj).hit(1);
 							if(((Rock) obj).getDurability() <= 0) {
-								System.out.println("Removing Rock");
 								objArray.remove(obj);
 								GameGround.remove(obj.getObjectDisplay());
 								objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
@@ -350,7 +410,6 @@ public class GameMain extends JFrame {
 						if(obj instanceof Jewelry) {
 							jewelLeft --;
 							score += ((Jewelry)obj).getScore();
-							System.out.println("Removing Jewelry");
 							objArray.remove(obj);
 							GameGround.remove(obj.getObjectDisplay());
 							objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
@@ -358,7 +417,7 @@ public class GameMain extends JFrame {
 							if(jewelLeft == 0){
 								refreshStage(); 
 								newStage();
-								time += 100; //10초 추가
+								time += 100; score += 500; //클리어시 시간과 점수 추가
 							}
 							break;
 						}
@@ -375,9 +434,12 @@ public class GameMain extends JFrame {
 
 	class GameActionListener implements ActionListener{ 
 		public void actionPerformed(ActionEvent e){ 
-			JButton b = (JButton)e.getSource(); 
-			if(b.getText().equals("종료")) 
-				System.exit(0); 
+			int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
+					JOptionPane.YES_NO_OPTION);
+			if (exit == JOptionPane.YES_OPTION) {
+				JOptionPane.showMessageDialog(null, "Goodbye");
+				System.exit(0);
+			}
 		} 
 	} 
 
@@ -394,7 +456,9 @@ public class GameMain extends JFrame {
 				user.canMove=true;
 				GameGround.requestFocus(); 
 			}
-			System.out.println("시간 초과");
+			user.canMove=false;
+			saveHighScore();
+			timeOver.setVisible(true);
 		}
 	}
 
@@ -409,7 +473,7 @@ public class GameMain extends JFrame {
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
-								System.out.println("매우 가까움: 초록색");
+								detector="GREEN";
 								detected=true;
 							}
 					}
@@ -422,18 +486,107 @@ public class GameMain extends JFrame {
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
-								System.out.println("가까움: 노란색");
+								detector="YELLOW";
 								detected = true;
 							} 
 					}
 				}
 			}
 		if(!detected)
-			System.out.println("주위에 보석 없음");
+			detector="OFF";
 	}
 
+	public static void checkFile(){
+		File HighScore = new File("HighScore");
+		
+		if(!HighScore.exists()){
+			System.out.println("최고 점수 파일이 저장되어 있지 않습니다.");
+			String filename = "HighScore";
+			highScore = 0;
+			try {
+				FileWriter out = new FileWriter(filename);
+				PrintWriter out2 = new PrintWriter(out);
+				out2.printf("%s %d","None",0);
+				System.out.println("최고점수 파일이 생성 되었습니다!");
+				out.close(); out2.close();
+
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(GameGround,"최고점수 파일 로딩에 실패했습니다.");
+			}
+		}
+		else {
+			FileReader in = null;
+			BufferedReader in2 = null; 
+			
+			try{
+				in = new FileReader("HighScore");
+				in2 = new BufferedReader(in);
+				String line = in2.readLine();
+
+				in.close(); in2.close(); 
+				String[] value = line.split(" ");
+
+				highScoreName = value[0];
+				highScore = Integer.parseInt(value[1]);
+			}
+			catch (Exception e){
+				JOptionPane.showMessageDialog(GameGround, "최고 점수 저장에 실패했습니다.");
+			}
+
+		}
+	}
+
+	public void saveHighScore(){
+		File HighScore = new File("HighScore");
+		if(HighScore.exists()){
+			if(score>highScore){
+
+				JFrame scoreFrame = new JFrame();
+				scoreFrame.setBounds(100, 100, 300, 200);
+				scoreFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				JPanel scorePanel = new JPanel();
+				scoreFrame.getContentPane().add(scorePanel, BorderLayout.SOUTH);
+
+				JTextField name = new JTextField();
+				scorePanel.add(name);
+				name.setColumns(10);
+
+				JButton btnButton1 = new JButton("저장");
+				btnButton1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try{
+							String s = name.getText();
+							String[] value = s.split(" ");
+							highScoreName = value[0];
+							String filename = "HighScore";
+							HighScore.delete();
+							FileWriter out = new FileWriter(filename);
+							PrintWriter out2 = new PrintWriter(out);
+							out2.printf("%s %d", highScoreName, score);
+							JOptionPane.showMessageDialog(scoreFrame, "최고점수가 저장되었습니다.");
+							out.close(); out2.close();
+							scoreFrame.setVisible(false);
+						} catch (Exception error){
+							JOptionPane.showMessageDialog(GameGround, "최고 점수 저장에 실패했습니다.");
+						}
+					}
+				});
+				scorePanel.add(btnButton1);
+				JLabel scoreLabel = new JLabel("<html>축하드립니다!<br>당신은 최고점수를 달성하셨습니다!<br>당신의 이름을 입력해주세요!!</html>", SwingConstants.CENTER);	
+				scoreFrame.add(scoreLabel);
+
+				scoreFrame.setVisible(true);
+
+			}
+			else{
+				JOptionPane.showMessageDialog(GameGround, "최고 기록 갱신 실패, 다시 도전하세요!");
+			} 
+		} 
+	}
 
 	public static void main(String args[]){ 
+		checkFile();
 		new GameMain(); 
 	} 
 
