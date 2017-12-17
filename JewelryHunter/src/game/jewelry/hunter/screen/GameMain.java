@@ -34,7 +34,6 @@ public class GameMain extends JFrame {
 	private JButton explan;
 	private JButton introExit;
 	private ExplainDialog explainDialog; 
-	private TimeOver timeOver;
 	private JLabel title;
 
 	public static JPanel GameGround; 
@@ -78,7 +77,6 @@ public class GameMain extends JFrame {
 			intro = new IntroPanel("img/lava-anim-dribbble.png");
 			title = new JLabel((new ImageIcon("img/Untitled-1.png")));
 			explainDialog = new ExplainDialog(this, "Explain");
-			timeOver = new TimeOver(this, "Time Over");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +96,6 @@ public class GameMain extends JFrame {
 		layeredPane.add(explan);
 
 		explainDialog.setLocationRelativeTo(this);
-		timeOver.setLocationRelativeTo(this);
 		
 		introExit = new JButton(new ImageIcon("img/end button.png"));
 		introExit.setBounds(620, 430, 200, 78);
@@ -207,42 +204,6 @@ public class GameMain extends JFrame {
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-	
-	class TimeOver extends JDialog {
-		private Image background;
-		private JButton exitB;
-		private JLabel timeOverImg;
-		
-		public TimeOver (JFrame frame, String title) throws IOException {
-			super(frame, title);
-			
-			setLayout(null);
-			timeOverImg = new JLabel((new ImageIcon("img/tmp_explain.png")));
-			timeOverImg.setBounds(0, 0, 500, 500);
-			add(timeOverImg);
-			exitB = new JButton("Exit");
-			exitB.setBounds(220, 400, 60, 30);
-			add(exitB);
-			setSize(500, 500);
-
-			exitB.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int exit = JOptionPane.showConfirmDialog(null, "게임을 종료하시겠습니까?", "종료창",
-							JOptionPane.YES_NO_OPTION);
-					if (exit == JOptionPane.YES_OPTION) {
-						JOptionPane.showMessageDialog(null, "Goodbye");
-						System.exit(0);
-					}
-				}
-			});
-		}
-		public void paintComponent(Graphics g) {
-			super.paintComponents(g);
 
 			g.drawImage(background, 0, 0, null);
 
@@ -458,7 +419,6 @@ public class GameMain extends JFrame {
 			}
 			user.canMove=false;
 			saveHighScore();
-			timeOver.setVisible(true);
 		}
 	}
 
