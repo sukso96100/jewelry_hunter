@@ -344,30 +344,33 @@ public class GameMain extends JFrame {
 				userInfo.setText(updatedInfo());
 				//repaint
 
-				if(monsterEncount<50) //10초 후 몬스터 등장
+				if(monsterEncount<50) {//10초 후 몬스터 등장
 					monsterEncount ++;
-				else if(monsterEncount == 50) { //몬스터 객체 생성
+					monster.makeMovable(false);
+			}else if(monsterEncount == 50) { //몬스터 객체 생성
 					//  몬스터 객체 생성
-					monster.makeMovable();
+					monster.makeMovable(true);
+					monster.setLocation(new Point(GameMap.XCENTER, GameMap.YCENTER));
 					monsterEncount ++;
 				}
 				else {
 					monster.move(user);
-					gameGround.repaint();
 					if(user.getLocation().equals(monster.getLocation())){	
 						user.life --;
 						monsterEncount = 0;
 						user.canMove = false;
 						wait = 1; //wait 변수 실행
+						monster.makeMovable(false);
 					}
+					gameGround.repaint();
 				}
 				//wait 변수가 실행되면 3초동안 움직일 수 없다.
 				if(wait > 0){
 					wait ++;
-					if (wait > 30)
+					if (wait > 20)
 						wait = 0;
 				} else
-					user.canMove = true;
+				user.canMove = true;
 				gameGround.requestFocus(); 
 			}
 			user.canMove=false;
