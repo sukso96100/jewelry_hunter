@@ -10,7 +10,6 @@ public class GameObject {
 	public String name;
 
 	private Point location;
-	protected JLabel objectDisplay;
 
 	public static final int WIDTH=90, HEIGHT=90;
 	public static final int MOVING_UNIT=100;
@@ -18,10 +17,6 @@ public class GameObject {
 	public GameObject(String name, Point location) {
 		this.name=name;
 		this.location = location;
-		this.objectDisplay = new JLabel(this.name);
-		this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
-		this.objectDisplay.setSize(GameObject.WIDTH,GameObject.HEIGHT); 
-		this.objectDisplay.setForeground(Color.BLUE); 
 	}
 	
 	public String getName() {
@@ -50,11 +45,8 @@ public class GameObject {
 		return 2 + this.location.y * GameObject.MOVING_UNIT;
 	}
 	
-	public JLabel getObjectDisplay() {
-		return this.objectDisplay;
-	}
-	@Override
 	
+	@Override
 	public String toString() {
 		return "GameObject [name=" + name + ", x=" + this.location.x + ", y=" + this.location.y + "]";
 	}

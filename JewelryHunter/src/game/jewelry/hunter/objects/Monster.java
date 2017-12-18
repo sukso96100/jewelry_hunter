@@ -1,37 +1,47 @@
 package game.jewelry.hunter.objects;
 
 import java.awt.Point;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Monster extends GameObject {
 	
-	private Queue<Point> path;
-	private int power;
-	private int count = 5;
+	
+	private int moveCount;
+	private boolean movable;
 
-	public Monster(String name, Point location, int power) {
+	public Monster(String name, Point location) {
 		super(name, location);
-		// TODO Auto-generated constructor stub
-		this.path = new LinkedList<>();
+		moveCount = 0;
+		this.movable = false;
 	}
 	
-	public void addPath(Point location) {
-		this.path.offer(location);
-	}
-	
-	public void move() {
-		if(this.count>0) {
-			this.count--;
-		}else {
-			Point next = this.path.poll();
-			this.setLocation(next);
-			this.objectDisplay.setLocation(this.computeX(), this.computeY()); 
+	public void move(User user) {
+		moveCount = (moveCount+1)%10;
+		
+		if(moveCount == 9) {
+		Point next = this.getLocation();
+		
+		if(this.getLocation().x > user.getLocation().x) 
+			next.x --;
+		else if(this.getLocation().x < user.getLocation().x)
+			next.x ++;
+		
+		if(this.getLocation().y > user.getLocation().y) 
+			next.y --;
+		else if(this.getLocation().y < user.getLocation().y)
+			next.y ++;
+
+		this.setLocation(next);
+		
 		}
+
 	}
 	
-	public int getPower() {
-		return this.power;
+	public boolean isMovable() {
+		return this.movable;
+	}
+	
+	public void makeMovable(boolean movable) {
+		this.movable = movable;
 	}
 
 }

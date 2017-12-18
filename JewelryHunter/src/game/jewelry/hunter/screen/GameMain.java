@@ -27,7 +27,7 @@ import game.jewelry.hunter.objects.Rock;
 
 public class GameMain extends JFrame { 
 	//UI
-	private URL btnImgURL = getClass().getResource("img/PixelArt.png");
+	private URL btnImgURL = getClass().getResource("res/PixelArt.png");
 	private JLayeredPane layeredPane;
 	private JLayeredPane gameMain;
 	private JButton start;
@@ -36,19 +36,19 @@ public class GameMain extends JFrame {
 	private ExplainDialog explainDialog; 
 	private JLabel title;
 
-	public static JPanel GameGround; 
+	public static GameGround gameGround; 
 	public JPanel GameMessage; 
 
-	//¿ÀºêÁ§Æ® °´Ã¼ º¯¼ö
+	//ì˜¤ë¸Œì íŠ¸ ê°ì²´ ë³€ìˆ˜
 	public User user;
 	public Rock[] rocks;
 	public Monster monster;
 
-	//GUI¸¦ À§ÇÑ JLabelº¯¼ö ->Repaint·Î ´ëÃ¼ÇÒ ¿¹Á¤
+	//GUIë¥¼ ìœ„í•œ JLabelë³€ìˆ˜ ->Repaintë¡œ ëŒ€ì²´í•  ì˜ˆì •
 	public JLabel userInfo; 
 	public JButton exit; 
 
-	//Info¿¡ µé¾î °¥ Á¤º¸µé
+	//Infoì— ë“¤ì–´ ê°ˆ ì •ë³´ë“¤
 	public int time;
 	public int jewelLeft;
 	public int score;
@@ -56,10 +56,14 @@ public class GameMain extends JFrame {
 	public static String highScoreName;
 	public String detector = "off";
 
-	Map<String, ArrayList<GameObject>> objectsMap = new HashMap();
+	public int monsterEncount = 0;
+	public int wait = 0;
+	
+	Map<Point, ArrayList<GameObject>> objectsMap = new HashMap();
 
 	GameMain(){ 
-		//Frame »ı¼º 
+
+		//Frame ìƒì„± 
 		setTitle(GameMap.strGameTitle); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		setLayout(null); 
@@ -90,7 +94,6 @@ public class GameMain extends JFrame {
 		start = new JButton(new ImageIcon("img/start.png"));
 		start.setBounds(180, 430, 200, 78);
 		layeredPane.add(start);
-
 		explan = new JButton(new ImageIcon("img/explanation button.png"));
 		explan.setBounds(400, 430, 200, 78);
 		layeredPane.add(explan);
@@ -99,18 +102,21 @@ public class GameMain extends JFrame {
 		
 		introExit = new JButton(new ImageIcon("img/end button.png"));
 		introExit.setBounds(620, 430, 200, 78);
+
 		layeredPane.add(introExit);
 
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+				change = true;
 				getContentPane().removeAll();
-				getContentPane().add(GameGround);
+				getContentPane().add(gameGround);
 				getContentPane().add(GameMessage);
 				revalidate();
 				repaint();
 				
-				//¹é±×¶ó¿îµå ¾²·¹µå ½ÇÇà Start Timer
+				//ë°±ê·¸ë¼ìš´ë“œ ì“°ë ˆë“œ ì‹¤í–‰ Start Timer
 				( new BackGroundThread() ).start();
 
 			}
@@ -118,7 +124,7 @@ public class GameMain extends JFrame {
 
 		explan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				explainDialog.setVisible(true); //´ÙÀÌ¾ó·Î±× Ãâ·Â
+				explainDialog.setVisible(true); //ë‹¤ì´ì–¼ë¡œê·¸ ì¶œë ¥
 			}
 		});
 
@@ -128,64 +134,58 @@ public class GameMain extends JFrame {
 		add(layeredPane);
 		setVisible(true);
 
-		GameGround = new JPanel(); 
+		//ì£¼ì¸ê³µ ê°ì²´ ìƒì„± 
+				user= new User("í”Œë ˆì´ì–´", new Point(GameMap.XCENTER,GameMap.YCENTER));
+				System.out.printf("%sì˜ ì´ˆê¸° ìœ„ì¹˜ëŠ” (%d, %d) ì…ë‹ˆë‹¤. \n", user.name, user.getLocation().x, user.getLocation().y); 
+				monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER));
+		gameGround = new GameGround(objectsMap, user, monster); 
 		GameMessage = new JPanel(); 
-		GameGround.setLayout(null); 
+		gameGround.setLayout(null); 
 		GameMessage.setLayout(null); 
 
 
-		GameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
-		System.out.printf("GameGround: %d, %d, \n", GameGround.getWidth(), GameGround.getHeight()); 
+		gameGround.setBounds(0,0,GameMap.MAX_WIDTH,GameMap.HEIGHT); 
+		System.out.printf("gameGround: %d, %d, \n", gameGround.getWidth(), gameGround.getHeight()); 
 
 		GameMessage.setBounds(GameMap.WIDTH,0,300,GameMap.HEIGHT); 
 		System.out.printf("GameMessage: %d, %d, \n", GameMessage.getWidth(), GameMessage.getHeight()); 
 
-		GameGround.setBackground(Color.WHITE); 
+		gameGround.setBackground(Color.WHITE); 
 		GameMessage.setBackground(Color.GRAY); 
 
 
-		//ÁÖÀÎ°ø °´Ã¼ »ı¼º 
-		user= new User("ÇÃ·¹ÀÌ¾î", new Point(GameMap.XCENTER,GameMap.YCENTER));
-		System.out.printf("%sÀÇ ÃÊ±â À§Ä¡´Â (%d, %d) ÀÔ´Ï´Ù. \n", user.name, user.getLocation().x, user.getLocation().y); 
 
-		//  ¸ó½ºÅÍ °´Ã¼ »ı¼º
-		monster = new Monster("Monster", new Point(GameMap.XCENTER,GameMap.YCENTER), 10);
-		GameGround.add(monster.getObjectDisplay());
-
-		//ÁÖÀÎ°ø JLabel °´Ã¼ »ı¼º ¹× Frame¿¡ Add 
-		GameGround.add(user.getObjectDisplay()); 
-
-		//À¯ÀúÀ§Ä¡¸¦ TextBox¿¡ Ãâ·Â 
+		//ìœ ì €ìœ„ì¹˜ë¥¼ TextBoxì— ì¶œë ¥ 
 		userInfo= new JLabel(updatedInfo());  
 		userInfo.setLocation(10,20); 
 		userInfo.setSize(200,200);
 		GameMessage.add(userInfo); 
 
-		//Á¾·á¹öÆ°
-		exit = new JButton("Á¾·á"); 
+		//ì¢…ë£Œë²„íŠ¼
+		exit = new JButton("ì¢…ë£Œ"); 
 		exit.setLocation(200, 600); 
 		exit.setSize(80,30);  
 		GameMessage.add(exit);
 
-		GameGround.addKeyListener(new GameKeyListener());	 
+		gameGround.addKeyListener(new GameKeyListener());	 
 		exit.addActionListener(new GameActionListener()); 
 
 		add(GameMessage); 
-		add(GameGround); 
+		add(gameGround); 
 
-		//½ºÅ×ÀÌÁö ¿ÀºêÁ§Æ® »ı¼º
+		//ìŠ¤í…Œì´ì§€ ì˜¤ë¸Œì íŠ¸ ìƒì„±
 		newStage();
 
 		setResizable(false); 
 		setVisible(true); 
-		GameGround.requestFocus(); 
+		gameGround.requestFocus(); 
 
 		
 	} 
 	class ExitActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int exit = JOptionPane.showConfirmDialog(null, "°ÔÀÓÀ» Á¾·áÇÏ½Ã°Ú½À´Ï±î?", "Á¾·áÃ¢",
+			int exit = JOptionPane.showConfirmDialog(null, "ê²Œì„ì„ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?", "ì¢…ë£Œì°½",
 					JOptionPane.YES_NO_OPTION);
 			if (exit == JOptionPane.YES_OPTION) {
 				JOptionPane.showMessageDialog(null, "Goodbye");
@@ -195,66 +195,18 @@ public class GameMain extends JFrame {
 	}
 
 
-	class IntroPanel extends JPanel {
-		private Image background;
-
-		public IntroPanel(String fileName) throws IOException {
-			background = ImageIO.read(new File(fileName));
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
-	class ExplainDialog extends JDialog {
-		private Image background;
-		private JButton okBtn;
-		private JLabel explainImg;
-
-
-		public ExplainDialog (JFrame frame, String title) throws IOException {
-			super(frame, title);
-
-			setLayout(null);
-			explainImg = new JLabel((new ImageIcon("img/¼³¸í.png")));
-			explainImg.setBounds(0, 0, 500, 500);
-			add(explainImg);
-			okBtn = new JButton("OK");
-			okBtn.setBounds(220, 400, 60, 30);
-			add(okBtn);
-			setSize(500, 500);
-
-			okBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setVisible(false);
-				}
-			});
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponents(g);
-
-			g.drawImage(background, 0, 0, null);
-
-		}
-	}
-
 	public void newStage() {
 
-		// º¸¼® ¹«ÀÛÀ§ À§Ä¡¿¡ Ãß°¡.
+		// ë³´ì„ ë¬´ì‘ìœ„ ìœ„ì¹˜ì— ì¶”ê°€.
 		for(int i=0; i<5; i++) {
 			boolean overLapError = true;
-			while(overLapError){ //overLapError°¡ »ı±â¸é ´Ù½Ã
+			while(overLapError){ //overLapErrorê°€ ìƒê¸°ë©´ ë‹¤ì‹œ
 				int x = (int) (Math.random() * GameMap.XSIZE-1);
 				int y = (int) (Math.random() * GameMap.YSIZE-1);
 				if(GameMap.isCenter(x, y))
-					continue;//ÇÃ·¹ÀÌ¾î À§Ä¡¿¡´Â º¸¼®À» »ı¼ºÇÒ ¼ö ¾ø´Ù
+					continue;//í”Œë ˆì´ì–´ ìœ„ì¹˜ì—ëŠ” ë³´ì„ì„ ìƒì„±í•  ìˆ˜ ì—†ë‹¤
 				// Get Array of objects of the point
-				ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+				ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 				boolean hasJewelry = false;
 				if(objArray==null) objArray = new ArrayList<GameObject>();
 				for(GameObject obj : objArray) {
@@ -264,20 +216,8 @@ public class GameMain extends JFrame {
 					}
 				}
 				if(!hasJewelry) {
-					int type = (int) (Math.random() * 10);
-					Jewelry jewelry;
-					if( type == 0)
-						jewelry = new Jewelry("ÇÃ·¹Æ¼³Ñ" ,new Point(x, y), 500);
-					else if( type < 4)
-						jewelry = new Jewelry("°ñµå" ,new Point(x, y), 200);
-					else if ( type < 7)
-						jewelry = new Jewelry("½Ç¹ö" ,new Point(x, y), 100);
-					else
-						jewelry = new Jewelry("ºê·ĞÁî" ,new Point(x, y), 10);
-					//^º¸¼® Å¸ÀÔ °áÁ¤
-					objArray.add(jewelry);
-					GameGround.add(jewelry.getObjectDisplay());
-					objectsMap.put(x+","+y, objArray);
+					objArray.add(new Jewelry(new Point(x, y)));
+					objectsMap.put(new Point(x,y), objArray);
 					jewelLeft ++;
 					overLapError = false;
 
@@ -287,53 +227,43 @@ public class GameMain extends JFrame {
 
 		for(int x=0; x<GameMap.XSIZE; x++){
 			for(int y=0; y<GameMap.YSIZE; y++){
-				//Áß½ÉÀ» Á¦¿ÜÇÑ ¸ğµç °÷À» ¹ÙÀ§·Î Ã¤¿î´Ù.
+				//ì¤‘ì‹¬ì„ ì œì™¸í•œ ëª¨ë“  ê³³ì„ ë°”ìœ„ë¡œ ì±„ìš´ë‹¤.
 				if(!GameMap.isCenter(x,y)){
-					//¹ÙÀ§´Â ¼¼ Á¾·ù
-					int type = (int) (Math.random() * 10);
-					Rock rock;
-					if(type == 0)
-						rock = new Rock("¹ÙÀ§3",new Point(x,y),5);
-					else if( type < 3 )
-						rock = new Rock("¹ÙÀ§2",new Point(x,y),2);
-					else
-						rock = new Rock("¹ÙÀ§",new Point(x,y),1);
+					Rock rock = new Rock("ë°”ìœ„",new Point(x,y));
 					// Get Array of objects of the point
-					ArrayList<GameObject>objArray = objectsMap.get(x+","+y);
+					ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 					if(objArray==null) objArray = new ArrayList<GameObject>();
 					objArray.add(rock);
-					GameGround.add(rock.getObjectDisplay());
-					objectsMap.put(x+","+y, objArray);
+					objectsMap.put(new Point(x,y), objArray);
 				}
 			}
 		}
+		
+		gameGround.repaint();
 
 	}
 
 	public String updatedInfo() { 
 		StringBuilder s = new StringBuilder();
-		s.append("<html>³²Àº ½Ã°£: " + time/10);
-		s.append("<br>À¯Àú À§Ä¡: (" + (user.getLocation().x) +", " + (user.getLocation().y) + ")");
-		s.append("<br> Á¡¼ö: " + score);
-		s.append("<br> ³²Àº º¸¼®: " + jewelLeft);
-		s.append("<br> º¸¼®°¨Áö: " + detector);
-		s.append("<br> ÃÖ°í±â·Ï: '" + highScoreName +"'/ " + highScore + "</html>");
+
+		s.append("<html>ë‚¨ì€ ì‹œê°„: " + time/10);
+		s.append("<br>ìœ ì € ìœ„ì¹˜: (" + (user.getLocation().x) +", " + (user.getLocation().y) + ")");
+		s.append("<br> ì ìˆ˜: " + score);
+		s.append("<br> ë‚¨ì€ ë³´ì„: " + jewelLeft);
+		s.append("<br> ë³´ì„ê°ì§€: " + detector);
+		s.append("<br> ë‚¨ì€ ëª©ìˆ¨: " + user.life);
+		s.append("<br> ìµœê³ ê¸°ë¡: '" + highScoreName +"'/ " + highScore + "</html>");
 		return s.toString();
 	}
 	
 	public void refreshStage() { 
-
-		GameGround.removeAll();
-		GameGround.revalidate();
-		GameGround.repaint();
+		gameGround.repaint();
 		objectsMap.clear();
 		user.getLocation().x = GameMap.XCENTER;
 		user.getLocation().y = GameMap.YCENTER;
-		GameGround.add(user.getObjectDisplay());
-		user.getObjectDisplay().setLocation(user.computeX(), user.computeY()); 
 	}
 
-	// Å°º¸µå ÀÌº¥Æ® Ã³¸® 
+	// í‚¤ë³´ë“œ ì´ë²¤íŠ¸ ì²˜ë¦¬ 
 	class GameKeyListener extends KeyAdapter{ 
 
 		public void keyPressed(KeyEvent e){ 
@@ -351,8 +281,8 @@ public class GameMain extends JFrame {
 				user.move(moveX, moveY);
 				userInfo.setText(updatedInfo());
 
-				ArrayList<GameObject>objArray = objectsMap.get(user.getLocation().x+","+user.getLocation().y);
-				// À¯Àú ¿ÀºêÁ§Æ® »óÈ£ ÀÛ¿ë °¨Áö 
+				ArrayList<GameObject>objArray = objectsMap.get(user.getLocation());
+				// ìœ ì € ì˜¤ë¸Œì íŠ¸ ìƒí˜¸ ì‘ìš© ê°ì§€ 
 				if(objArray!=null) {
 					for(GameObject obj : objArray) {
 
@@ -360,8 +290,7 @@ public class GameMain extends JFrame {
 							((Rock) obj).hit(1);
 							if(((Rock) obj).getDurability() <= 0) {
 								objArray.remove(obj);
-								GameGround.remove(obj.getObjectDisplay());
-								objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
+								objectsMap.put(user.getLocation(), objArray);
 							}
 							user.move(-moveX, -moveY);
 							return;
@@ -372,30 +301,37 @@ public class GameMain extends JFrame {
 							jewelLeft --;
 							score += ((Jewelry)obj).getScore();
 							objArray.remove(obj);
-							GameGround.remove(obj.getObjectDisplay());
-							objectsMap.put(user.getLocation().x+","+user.getLocation().y, objArray);
-							//³²Àº º¸¼®ÀÇ °¹¼ö°¡ 0ÀÏ¶§ ´º ½ºÅ×ÀÌÁö
+							objectsMap.put(user.getLocation(), objArray);
+							//ë‚¨ì€ ë³´ì„ì˜ ê°¯ìˆ˜ê°€ 0ì¼ë•Œ ë‰´ ìŠ¤í…Œì´ì§€
 							if(jewelLeft == 0){
 								refreshStage(); 
 								newStage();
-								time += 100; score += 500; //Å¬¸®¾î½Ã ½Ã°£°ú Á¡¼ö Ãß°¡
+								monsterEncount = 0;
+								time += 100; score += 500; //í´ë¦¬ì–´ì‹œ ì‹œê°„ê³¼ ì ìˆ˜ ì¶”ê°€
 							}
 							break;
 						}
 					}
+					if(monsterEncount>50)
+						if(monster.getLocation().x == user.getLocation().x && monster.getLocation().y == user.getLocation().y){	
+							user.life --;
+							monsterEncount = 0;
+							user.canMove = false;
+							wait = 1; //wait ë³€ìˆ˜ ì‹¤í–‰
+						}
 				}
 
-				//º¸¼® °¨Áö 
+				//ë³´ì„ ê°ì§€ 
 				detect(objArray);
 			} 
-
+			gameGround.repaint();
 		}
 	}
 
 
 	class GameActionListener implements ActionListener{ 
 		public void actionPerformed(ActionEvent e){ 
-			int exit = JOptionPane.showConfirmDialog(null, "°ÔÀÓÀ» Á¾·áÇÏ½Ã°Ú½À´Ï±î?", "Á¾·áÃ¢",
+			int exit = JOptionPane.showConfirmDialog(null, "ê²Œì„ì„ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?", "ì¢…ë£Œì°½",
 					JOptionPane.YES_NO_OPTION);
 			if (exit == JOptionPane.YES_OPTION) {
 				JOptionPane.showMessageDialog(null, "Goodbye");
@@ -405,31 +341,60 @@ public class GameMain extends JFrame {
 	} 
 
 
-	//0.1ÃÊ¸¶´Ù ÇÑ¹ø¾¿ ½ÇÇà
+	//0.1ì´ˆë§ˆë‹¤ í•œë²ˆì”© ì‹¤í–‰
 	class BackGroundThread extends Thread{
 		public void run(){
 			for(time = 300; time>=0; time--){
+				if(user.life <= 0)
+					break;
 				try {Thread.sleep(100);}
 				catch (InterruptedException e)
 				{ e.printStackTrace(); }	
 				userInfo.setText(updatedInfo());
 				//repaint
-				user.canMove=true;
-				GameGround.requestFocus(); 
+
+				if(monsterEncount<50) {//10ì´ˆ í›„ ëª¬ìŠ¤í„° ë“±ì¥
+					monsterEncount ++;
+					monster.makeMovable(false);
+			}else if(monsterEncount == 50) { //ëª¬ìŠ¤í„° ê°ì²´ ìƒì„±
+					//  ëª¬ìŠ¤í„° ê°ì²´ ìƒì„±
+					monster.makeMovable(true);
+					monster.setLocation(new Point(GameMap.XCENTER, GameMap.YCENTER));
+					monsterEncount ++;
+				}
+				else {
+					monster.move(user);
+					if(user.getLocation().equals(monster.getLocation())){	
+						user.life --;
+						monsterEncount = 0;
+						user.canMove = false;
+						wait = 1; //wait ë³€ìˆ˜ ì‹¤í–‰
+						monster.makeMovable(false);
+					}
+					gameGround.repaint();
+				}
+				//wait ë³€ìˆ˜ê°€ ì‹¤í–‰ë˜ë©´ 3ì´ˆë™ì•ˆ ì›€ì§ì¼ ìˆ˜ ì—†ë‹¤.
+				if(wait > 0){
+					wait ++;
+					if (wait > 20)
+						wait = 0;
+				} else
+				user.canMove = true;
+				gameGround.requestFocus(); 
 			}
 			user.canMove=false;
 			saveHighScore();
 		}
 	}
 
-	//º¸¼® °¨Áö ¸Ş¼Òµå
+	//ë³´ì„ ê°ì§€ ë©”ì†Œë“œ
 	public void detect(ArrayList<GameObject>objArray) {
 		boolean detected=false;
 
 		for(int i = user.getLocation().x-1; i <= user.getLocation().x+1; i++)
 			for(int j = user.getLocation().y-1; j <= user.getLocation().y+1; j++){
 				if(!detected){
-					objArray = objectsMap.get(i+","+j);
+					objArray = objectsMap.get(new Point(i,j));
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
@@ -442,7 +407,7 @@ public class GameMain extends JFrame {
 		for(int i = user.getLocation().x-2; i <= user.getLocation().x+2; i++)
 			for(int j = user.getLocation().y-2; j <= user.getLocation().y+2; j++){
 				if(!detected){
-					objArray = objectsMap.get(i+","+j);
+					objArray = objectsMap.get(new Point(i,j));
 					if(objArray!=null) {
 						for(GameObject obj : objArray)
 							if(obj instanceof Jewelry){
@@ -454,24 +419,25 @@ public class GameMain extends JFrame {
 			}
 		if(!detected)
 			detector="OFF";
+
 	}
 
 	public static void checkFile(){
 		File HighScore = new File("HighScore");
 		
 		if(!HighScore.exists()){
-			System.out.println("ÃÖ°í Á¡¼ö ÆÄÀÏÀÌ ÀúÀåµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.");
+			System.out.println("ìµœê³  ì ìˆ˜ íŒŒì¼ì´ ì €ì¥ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			String filename = "HighScore";
 			highScore = 0;
 			try {
 				FileWriter out = new FileWriter(filename);
 				PrintWriter out2 = new PrintWriter(out);
 				out2.printf("%s %d","None",0);
-				System.out.println("ÃÖ°íÁ¡¼ö ÆÄÀÏÀÌ »ı¼º µÇ¾ú½À´Ï´Ù!");
+				System.out.println("ìµœê³ ì ìˆ˜ íŒŒì¼ì´ ìƒì„± ë˜ì—ˆìŠµë‹ˆë‹¤!");
 				out.close(); out2.close();
 
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(GameGround,"ÃÖ°íÁ¡¼ö ÆÄÀÏ ·Îµù¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+				JOptionPane.showMessageDialog(gameGround,"ìµœê³ ì ìˆ˜ íŒŒì¼ ë¡œë”©ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 			}
 		}
 		else {
@@ -490,7 +456,7 @@ public class GameMain extends JFrame {
 				highScore = Integer.parseInt(value[1]);
 			}
 			catch (Exception e){
-				JOptionPane.showMessageDialog(GameGround, "ÃÖ°í Á¡¼ö ÀúÀå¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+				JOptionPane.showMessageDialog(gameGround, "ìµœê³  ì ìˆ˜ ì €ì¥ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 			}
 
 		}
@@ -512,7 +478,7 @@ public class GameMain extends JFrame {
 				scorePanel.add(name);
 				name.setColumns(10);
 
-				JButton btnButton1 = new JButton("ÀúÀå");
+				JButton btnButton1 = new JButton("ì €ì¥");
 				btnButton1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try{
@@ -524,23 +490,26 @@ public class GameMain extends JFrame {
 							FileWriter out = new FileWriter(filename);
 							PrintWriter out2 = new PrintWriter(out);
 							out2.printf("%s %d", highScoreName, score);
-							JOptionPane.showMessageDialog(scoreFrame, "ÃÖ°íÁ¡¼ö°¡ ÀúÀåµÇ¾ú½À´Ï´Ù.");
+
+							JOptionPane.showMessageDialog(scoreFrame, "ìµœê³ ì ìˆ˜ê°€ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 							out.close(); out2.close();
 							scoreFrame.setVisible(false);
 						} catch (Exception error){
-							JOptionPane.showMessageDialog(GameGround, "ÃÖ°í Á¡¼ö ÀúÀå¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+							JOptionPane.showMessageDialog(gameGround, "ìµœê³  ì ìˆ˜ ì €ì¥ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 						}
 					}
 				});
 				scorePanel.add(btnButton1);
-				JLabel scoreLabel = new JLabel("<html>ÃàÇÏµå¸³´Ï´Ù!<br>´ç½ÅÀº ÃÖ°íÁ¡¼ö¸¦ ´Ş¼ºÇÏ¼Ì½À´Ï´Ù!<br>´ç½ÅÀÇ ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä!!</html>", SwingConstants.CENTER);	
+
+				JLabel scoreLabel = new JLabel("<html>ì¶•í•˜ë“œë¦½ë‹ˆë‹¤!<br>ë‹¹ì‹ ì€ ìµœê³ ì ìˆ˜ë¥¼ ë‹¬ì„±í•˜ì…¨ìŠµë‹ˆë‹¤!<br>ë‹¹ì‹ ì˜ ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”!!</html>", SwingConstants.CENTER);	
 				scoreFrame.add(scoreLabel);
 
 				scoreFrame.setVisible(true);
 
 			}
 			else{
-				JOptionPane.showMessageDialog(GameGround, "ÃÖ°í ±â·Ï °»½Å ½ÇÆĞ, ´Ù½Ã µµÀüÇÏ¼¼¿ä!");
+
+				JOptionPane.showMessageDialog(gameGround, "ìµœê³  ê¸°ë¡ ê°±ì‹  ì‹¤íŒ¨, ë‹¤ì‹œ ë„ì „í•˜ì„¸ìš”!");
 			} 
 		} 
 	}
