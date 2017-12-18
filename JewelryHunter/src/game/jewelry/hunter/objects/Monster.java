@@ -15,9 +15,9 @@ public class Monster extends GameObject {
 	}
 	
 	public void move(User user) {
-		moveCount = (moveCount+1)%10;
+		moveCount = (moveCount+1)%15;
 		
-		if(moveCount == 9) {
+		if(moveCount == 14) {
 		Point next = this.getLocation();
 		
 		if(this.getLocation().x > user.getLocation().x) 

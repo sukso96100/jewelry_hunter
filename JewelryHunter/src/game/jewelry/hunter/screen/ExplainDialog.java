@@ -22,13 +22,13 @@ public class ExplainDialog extends JDialog {
 		super(frame, title);
 
 		setLayout(null);
-		explainImg = new JLabel((new ImageIcon("res/tmp_explain.png")));
+		explainImg = new JLabel((new ImageIcon("res/explanation.png")));
 		explainImg.setBounds(0, 0, 500, 500);
 		add(explainImg);
 		okBtn = new JButton("OK");
 		okBtn.setBounds(220, 400, 60, 30);
 		add(okBtn);
-		setSize(500, 500);
+		setSize(520, 500);
 
 		okBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
