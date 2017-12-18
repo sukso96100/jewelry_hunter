@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import game.jewelry.hunter.objects.GameMap;
 import game.jewelry.hunter.objects.GameObject;
 import game.jewelry.hunter.objects.Jewelry;
 import game.jewelry.hunter.objects.Monster;
@@ -27,6 +28,7 @@ public class GameGround extends JPanel{
 	Image rocks[];
 	Image userImg;
 	Image monsterImg;
+	Image background;
 	
 	public GameGround(Map<Point, ArrayList<GameObject>> objMap,
 			User user, Monster monster) {
@@ -46,7 +48,10 @@ public class GameGround extends JPanel{
 			this.rocks[0] = ImageIO.read(new FileInputStream("res/rocka.png"));
 			this.rocks[1] = ImageIO.read(new FileInputStream("res/rockb.png"));
 			this.userImg = ImageIO.read(new FileInputStream("res/pickax.png"));
+			
 			this.monsterImg = ImageIO.read(new FileInputStream("res/monster.png"));
+			this.background = ImageIO.read(new FileInputStream("res/background.png"));
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,6 +61,7 @@ public class GameGround extends JPanel{
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(background, 0, 0, GameMap.WIDTH, GameMap.HEIGHT, null);
 		for(ArrayList<GameObject> objs : this.objMap.values()) {
 			for(GameObject obj : objs) {
 				if(obj instanceof Jewelry) {
