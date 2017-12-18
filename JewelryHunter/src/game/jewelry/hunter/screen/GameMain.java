@@ -34,7 +34,7 @@ public class GameMain extends JFrame {
 	private JButton explan;
 	private JButton introExit;
 	private ExplainDialog explainDialog; 
-	private boolean change = false;
+	private JLabel title;
 
 	public static GameGround gameGround; 
 	public JPanel GameMessage; 
@@ -62,6 +62,7 @@ public class GameMain extends JFrame {
 	Map<Point, ArrayList<GameObject>> objectsMap = new HashMap();
 
 	GameMain(){ 
+
 		//Frame 생성 
 		setTitle(GameMap.strGameTitle); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -77,7 +78,8 @@ public class GameMain extends JFrame {
 		JPanel intro = null;
 
 		try {
-			intro = new IntroPanel("res/lava-anim-dribbble.png");
+			intro = new IntroPanel("img/lava-anim-dribbble.png");
+			title = new JLabel((new ImageIcon("img/Untitled-1.png")));
 			explainDialog = new ExplainDialog(this, "Explain");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,24 +87,28 @@ public class GameMain extends JFrame {
 
 		this.add(intro);
 		intro.setBounds(0, 0, 1000, 700);
+		
+		title.setBounds(0, 0, 1000, 400);
+		add(title);
 
-		start = new JButton(new ImageIcon("res/PixelArt.png"));
-		start.setBounds(400, 330, 200, 78);
+		start = new JButton(new ImageIcon("img/start.png"));
+		start.setBounds(180, 430, 200, 78);
 		layeredPane.add(start);
-
-		explan = new JButton(new ImageIcon("res/PixelArt.png"));
+		explan = new JButton(new ImageIcon("img/explanation button.png"));
 		explan.setBounds(400, 430, 200, 78);
 		layeredPane.add(explan);
 
 		explainDialog.setLocationRelativeTo(this);
+		
+		introExit = new JButton(new ImageIcon("img/end button.png"));
+		introExit.setBounds(620, 430, 200, 78);
 
-		introExit = new JButton(new ImageIcon("res/PixelArt.png"));
-		introExit.setBounds(400, 530, 200, 78);
 		layeredPane.add(introExit);
 
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				change = true;
 				getContentPane().removeAll();
 				getContentPane().add(gameGround);
@@ -148,6 +154,7 @@ public class GameMain extends JFrame {
 		GameMessage.setBackground(Color.GRAY); 
 
 
+
 		//유저위치를 TextBox에 출력 
 		userInfo= new JLabel(updatedInfo());  
 		userInfo.setLocation(10,20); 
@@ -186,6 +193,7 @@ public class GameMain extends JFrame {
 			}
 		}
 	}
+
 
 	public void newStage() {
 
@@ -237,6 +245,7 @@ public class GameMain extends JFrame {
 
 	public String updatedInfo() { 
 		StringBuilder s = new StringBuilder();
+
 		s.append("<html>남은 시간: " + time/10);
 		s.append("<br>유저 위치: (" + (user.getLocation().x) +", " + (user.getLocation().y) + ")");
 		s.append("<br> 점수: " + score);
@@ -410,6 +419,7 @@ public class GameMain extends JFrame {
 			}
 		if(!detected)
 			detector="OFF";
+
 	}
 
 	public static void checkFile(){
@@ -480,6 +490,7 @@ public class GameMain extends JFrame {
 							FileWriter out = new FileWriter(filename);
 							PrintWriter out2 = new PrintWriter(out);
 							out2.printf("%s %d", highScoreName, score);
+
 							JOptionPane.showMessageDialog(scoreFrame, "최고점수가 저장되었습니다.");
 							out.close(); out2.close();
 							scoreFrame.setVisible(false);
@@ -489,6 +500,7 @@ public class GameMain extends JFrame {
 					}
 				});
 				scorePanel.add(btnButton1);
+
 				JLabel scoreLabel = new JLabel("<html>축하드립니다!<br>당신은 최고점수를 달성하셨습니다!<br>당신의 이름을 입력해주세요!!</html>", SwingConstants.CENTER);	
 				scoreFrame.add(scoreLabel);
 
@@ -496,6 +508,7 @@ public class GameMain extends JFrame {
 
 			}
 			else{
+
 				JOptionPane.showMessageDialog(gameGround, "최고 기록 갱신 실패, 다시 도전하세요!");
 			} 
 		} 
