@@ -208,7 +208,6 @@ public class GameMain extends JFrame {
 					}
 				}
 				if(!hasJewelry) {
-					int type = (int) (Math.random() * 10);
 					objArray.add(new Jewelry(new Point(x, y)));
 					objectsMap.put(new Point(x,y), objArray);
 					jewelLeft ++;
@@ -222,13 +221,7 @@ public class GameMain extends JFrame {
 			for(int y=0; y<GameMap.YSIZE; y++){
 				//중심을 제외한 모든 곳을 바위로 채운다.
 				if(!GameMap.isCenter(x,y)){
-					//바위는 두 종류
-					int type = (int) (Math.random() * 10);
-					Rock rock;
-					if( type < 3 )
-						rock = new Rock("바위2",new Point(x,y),3);
-					else
-						rock = new Rock("바위",new Point(x,y),1);
+					Rock rock = new Rock("바위",new Point(x,y));
 					// Get Array of objects of the point
 					ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 					if(objArray==null) objArray = new ArrayList<GameObject>();
@@ -351,30 +344,33 @@ public class GameMain extends JFrame {
 				userInfo.setText(updatedInfo());
 				//repaint
 
-				if(monsterEncount<50) //10초 후 몬스터 등장
+				if(monsterEncount<50) {//10초 후 몬스터 등장
 					monsterEncount ++;
-				else if(monsterEncount == 50) { //몬스터 객체 생성
+					monster.makeMovable(false);
+			}else if(monsterEncount == 50) { //몬스터 객체 생성
 					//  몬스터 객체 생성
-					monster.makeMovable();
+					monster.makeMovable(true);
+					monster.setLocation(new Point(GameMap.XCENTER, GameMap.YCENTER));
 					monsterEncount ++;
 				}
 				else {
 					monster.move(user);
-					gameGround.repaint();
 					if(user.getLocation().equals(monster.getLocation())){	
 						user.life --;
 						monsterEncount = 0;
 						user.canMove = false;
 						wait = 1; //wait 변수 실행
+						monster.makeMovable(false);
 					}
+					gameGround.repaint();
 				}
 				//wait 변수가 실행되면 3초동안 움직일 수 없다.
 				if(wait > 0){
 					wait ++;
-					if (wait > 30)
+					if (wait > 20)
 						wait = 0;
 				} else
-					user.canMove = true;
+				user.canMove = true;
 				gameGround.requestFocus(); 
 			}
 			user.canMove=false;

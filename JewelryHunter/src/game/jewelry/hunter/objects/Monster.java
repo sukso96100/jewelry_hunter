@@ -40,8 +40,8 @@ public class Monster extends GameObject {
 		return this.movable;
 	}
 	
-	public void makeMovable() {
-		this.movable = true;
+	public void makeMovable(boolean movable) {
+		this.movable = movable;
 	}
 
 }
