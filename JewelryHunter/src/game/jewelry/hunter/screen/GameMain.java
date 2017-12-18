@@ -208,7 +208,6 @@ public class GameMain extends JFrame {
 					}
 				}
 				if(!hasJewelry) {
-					int type = (int) (Math.random() * 10);
 					objArray.add(new Jewelry(new Point(x, y)));
 					objectsMap.put(new Point(x,y), objArray);
 					jewelLeft ++;
@@ -222,13 +221,7 @@ public class GameMain extends JFrame {
 			for(int y=0; y<GameMap.YSIZE; y++){
 				//중심을 제외한 모든 곳을 바위로 채운다.
 				if(!GameMap.isCenter(x,y)){
-					//바위는 두 종류
-					int type = (int) (Math.random() * 10);
-					Rock rock;
-					if( type < 3 )
-						rock = new Rock("바위2",new Point(x,y),3);
-					else
-						rock = new Rock("바위",new Point(x,y),1);
+					Rock rock = new Rock("바위",new Point(x,y));
 					// Get Array of objects of the point
 					ArrayList<GameObject>objArray = objectsMap.get(new Point(x,y));
 					if(objArray==null) objArray = new ArrayList<GameObject>();

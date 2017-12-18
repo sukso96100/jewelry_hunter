@@ -23,9 +23,8 @@ public class GameGround extends JPanel{
 	User user;
 	Monster monster;
 	
-	Image diamondb;
 	Image diamonds[];
-	Image rock;
+	Image rocks[];
 	Image userImg;
 	Image monsterImg;
 	
@@ -35,14 +34,19 @@ public class GameGround extends JPanel{
 		this.user = user;
 		this.monster = monster;
 		this.diamonds = new Image[4];
+		this.rocks = new Image[2];
 		try {
+			// diamonds
 			this.diamonds[0] = ImageIO.read(new FileInputStream("res/diamondb.png"));
 			this.diamonds[1] = ImageIO.read(new FileInputStream("res/diamondg.png"));
 			this.diamonds[2] = ImageIO.read(new FileInputStream("res/diamondr.png"));
 			this.diamonds[3] = ImageIO.read(new FileInputStream("res/diamondy.png"));
-			this.rock = ImageIO.read(new FileInputStream("res/background.png"));
+			
+			//rocks
+			this.rocks[0] = ImageIO.read(new FileInputStream("res/rocka.png"));
+			this.rocks[1] = ImageIO.read(new FileInputStream("res/rockb.png"));
 			this.userImg = ImageIO.read(new FileInputStream("res/pickax.png"));
-			this.monsterImg = ImageIO.read(new FileInputStream("res/lava-anim-dribbble.png"));
+			this.monsterImg = ImageIO.read(new FileInputStream("res/monster.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,14 +58,14 @@ public class GameGround extends JPanel{
 		Graphics2D g2d = (Graphics2D) g;
 		for(ArrayList<GameObject> objs : this.objMap.values()) {
 			for(GameObject obj : objs) {
-				if(obj instanceof Rock) {
-					g2d.drawImage(rock, obj.computeX(), obj.computeY(),
+				if(obj instanceof Jewelry) {
+					g2d.drawImage(diamonds[((Jewelry) obj).getType()], obj.computeX(), obj.computeY(),
 							GameObject.WIDTH, GameObject.HEIGHT, null);
 				}
 			}
 			for(GameObject obj : objs) {
-				if(obj instanceof Jewelry) {
-					g2d.drawImage(diamonds[((Jewelry) obj).getType()], obj.computeX(), obj.computeY(),
+				if(obj instanceof Rock) {
+					g2d.drawImage(rocks[((Rock) obj).getType()], obj.computeX(), obj.computeY(),
 							GameObject.WIDTH, GameObject.HEIGHT, null);
 				}
 			}
